@@ -40,5 +40,5 @@ RUN addgroup -g 1001 -S nodejs && \
 USER nodejs
 
 # Команда по умолчанию
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "dist/index.js"]
 
