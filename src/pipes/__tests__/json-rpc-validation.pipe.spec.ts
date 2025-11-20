@@ -108,9 +108,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(null);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.PARSE_ERROR,
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.PARSE_ERROR);
 			}
 		});
 
@@ -120,9 +118,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(undefined);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.PARSE_ERROR,
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.PARSE_ERROR);
 			}
 		});
 
@@ -132,9 +128,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform("string");
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.PARSE_ERROR,
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.PARSE_ERROR);
 			}
 		});
 
@@ -155,7 +149,7 @@ describe("JsonRpcValidationPipe", () => {
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
 				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST,
+					JsonRpcErrorCode.INVALID_REQUEST
 				);
 				const rpcData = (error as JsonRpcException).getRpcData();
 				expect(rpcData).toEqual({ requestId: 1 });
@@ -174,7 +168,7 @@ describe("JsonRpcValidationPipe", () => {
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
 				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST,
+					JsonRpcErrorCode.INVALID_REQUEST
 				);
 			}
 		});
@@ -192,7 +186,7 @@ describe("JsonRpcValidationPipe", () => {
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
 				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST,
+					JsonRpcErrorCode.INVALID_REQUEST
 				);
 			}
 		});
@@ -210,7 +204,7 @@ describe("JsonRpcValidationPipe", () => {
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
 				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST,
+					JsonRpcErrorCode.INVALID_REQUEST
 				);
 			}
 		});
@@ -229,7 +223,7 @@ describe("JsonRpcValidationPipe", () => {
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
 				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST,
+					JsonRpcErrorCode.INVALID_REQUEST
 				);
 			}
 		});
@@ -365,4 +359,3 @@ describe("JsonRpcValidationPipe", () => {
 		});
 	});
 });
-

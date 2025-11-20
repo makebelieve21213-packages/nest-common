@@ -1,10 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
 import { HttpException, HttpStatus } from "@nestjs/common";
 import JsonRpcException from "src/errors/json-rpc.error";
-import {
-	JsonRpcErrorCode,
-	JSON_RPC_ERROR_MESSAGES,
-} from "src/types/json-rpc-error-codes";
+import { JsonRpcErrorCode, JSON_RPC_ERROR_MESSAGES } from "src/types/json-rpc-error-codes";
 
 describe("JsonRpcException", () => {
 	describe("constructor", () => {
@@ -27,14 +24,9 @@ describe("JsonRpcException", () => {
 
 		it("должен создать исключение с кастомным сообщением", () => {
 			const customMessage = "Custom error message";
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.INVALID_REQUEST,
-				customMessage,
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.INVALID_REQUEST, customMessage);
 
-			expect(exception.getRpcErrorCode()).toBe(
-				JsonRpcErrorCode.INVALID_REQUEST,
-			);
+			expect(exception.getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 			const response = exception.getResponse();
 			expect(response).toEqual({
 				jsonrpc: "2.0",
@@ -50,7 +42,7 @@ describe("JsonRpcException", () => {
 			const exception = new JsonRpcException(
 				JsonRpcErrorCode.INVALID_PARAMS,
 				"Invalid params",
-				data,
+				data
 			);
 
 			expect(exception.getRpcData()).toEqual(data);
@@ -70,7 +62,7 @@ describe("JsonRpcException", () => {
 				JsonRpcErrorCode.INTERNAL_ERROR,
 				"Error",
 				undefined,
-				HttpStatus.BAD_REQUEST,
+				HttpStatus.BAD_REQUEST
 			);
 
 			expect(exception.getStatus()).toBe(HttpStatus.BAD_REQUEST);
@@ -87,11 +79,7 @@ describe("JsonRpcException", () => {
 	describe("getRpcData", () => {
 		it("должен вернуть данные ошибки", () => {
 			const data = { key: "value" };
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.INTERNAL_ERROR,
-				"Error",
-				data,
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.INTERNAL_ERROR, "Error", data);
 			expect(exception.getRpcData()).toEqual(data);
 		});
 
@@ -112,10 +100,7 @@ describe("JsonRpcException", () => {
 		});
 
 		it("должен создать JsonRpcException из HttpException с объектным ответом", () => {
-			const httpException = new HttpException(
-				{ message: "Error message" },
-				HttpStatus.NOT_FOUND,
-			);
+			const httpException = new HttpException({ message: "Error message" }, HttpStatus.NOT_FOUND);
 			const rpcException = JsonRpcException.fromHttpException(httpException, 456);
 
 			expect(rpcException).toBeInstanceOf(JsonRpcException);
@@ -126,7 +111,7 @@ describe("JsonRpcException", () => {
 		it("должен использовать message из exception если response не содержит message", () => {
 			const httpException = new HttpException(
 				{ error: "Error" },
-				HttpStatus.INTERNAL_SERVER_ERROR,
+				HttpStatus.INTERNAL_SERVER_ERROR
 			);
 			httpException.message = "Exception message";
 			const rpcException = JsonRpcException.fromHttpException(httpException);
@@ -140,7 +125,7 @@ describe("JsonRpcException", () => {
 					response.error !== null &&
 					"message" in response.error
 					? response.error.message
-					: "",
+					: ""
 			).toBe("Exception message");
 		});
 	});
@@ -216,9 +201,7 @@ describe("JsonRpcException", () => {
 		});
 
 		it("должен вернуть SERVICE_UNAVAILABLE для SERVICE_UNAVAILABLE", () => {
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.SERVICE_UNAVAILABLE,
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.SERVICE_UNAVAILABLE);
 			expect(exception.getStatus()).toBe(HttpStatus.SERVICE_UNAVAILABLE);
 		});
 
@@ -238,4 +221,3 @@ describe("JsonRpcException", () => {
 		});
 	});
 });
-

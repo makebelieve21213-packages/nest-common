@@ -1,11 +1,5 @@
-import {
-	ExceptionFilter,
-	Catch,
-	ArgumentsHost,
-	HttpStatus,
-} from "@nestjs/common";
-import type { Request, Response } from "express";
 import { LoggerService } from "@makebelieve21213-packages/logger";
+import { ExceptionFilter, Catch, ArgumentsHost, HttpStatus } from "@nestjs/common";
 import JsonRpcException from "src/errors/json-rpc.error";
 import {
 	JsonRpcErrorCode,
@@ -14,6 +8,8 @@ import {
 	mapHttpStatusToJsonRpcErrorCode,
 	getErrorStatus,
 } from "src/types/json-rpc-error-codes";
+
+import type { Request, Response } from "express";
 import type { JsonRpcResponse } from "src/types/json-rpc-types";
 
 // Фильтр исключений для MCP контроллера
@@ -74,26 +70,25 @@ export default class JsonRpcExceptionFilter implements ExceptionFilter {
 				httpStatus = rpcException.getStatus();
 
 				this.logger.error(
-					`JSON-RPC error: code=${rpcErrorCode}, message=${errorMessage}, id=${requestId}, response=${JSON.stringify(jsonRpcResponse)}`,
+					`JSON-RPC error: code=${rpcErrorCode}, message=${errorMessage}, id=${requestId}, response=${JSON.stringify(jsonRpcResponse)}`
 				);
 				break;
 			}
 
 			case "Error": {
 				const error = exception as Error;
-				const errorStatus =
-					getErrorStatus(error) || HttpStatus.INTERNAL_SERVER_ERROR;
-				const rpcErrorCode =
-					mapHttpStatusToJsonRpcErrorCode(errorStatus);
+				const errorStatus = getErrorStatus(error);
+				const rpcErrorCode = errorStatus
+					? mapHttpStatusToJsonRpcErrorCode(errorStatus)
+					: JsonRpcErrorCode.INTERNAL_ERROR;
+				const httpStatusForError = errorStatus || HttpStatus.INTERNAL_SERVER_ERROR;
 
 				jsonRpcResponse = {
 					jsonrpc: "2.0",
 					id: requestId,
 					error: {
 						code: rpcErrorCode,
-						message:
-							error.message ||
-							JSON_RPC_ERROR_MESSAGES[rpcErrorCode],
+						message: error.message || JSON_RPC_ERROR_MESSAGES[rpcErrorCode],
 						data: {
 							name: JSON_RPC_ERROR_NAMES[rpcErrorCode],
 							originalError: error.name,
@@ -101,11 +96,11 @@ export default class JsonRpcExceptionFilter implements ExceptionFilter {
 					},
 				};
 
-				httpStatus = errorStatus;
+				httpStatus = httpStatusForError;
 
 				this.logger.error(
 					`Error in JSON-RPC handler: ${error.message}, response=${JSON.stringify(jsonRpcResponse)}`,
-					error.stack,
+					error.stack
 				);
 				break;
 			}
@@ -117,14 +112,9 @@ export default class JsonRpcExceptionFilter implements ExceptionFilter {
 					id: requestId,
 					error: {
 						code: JsonRpcErrorCode.INTERNAL_ERROR,
-						message:
-							JSON_RPC_ERROR_MESSAGES[
-								JsonRpcErrorCode.INTERNAL_ERROR
-							],
+						message: JSON_RPC_ERROR_MESSAGES[JsonRpcErrorCode.INTERNAL_ERROR],
 						data: {
-							name: JSON_RPC_ERROR_NAMES[
-								JsonRpcErrorCode.INTERNAL_ERROR
-							],
+							name: JSON_RPC_ERROR_NAMES[JsonRpcErrorCode.INTERNAL_ERROR],
 						},
 					},
 				};
@@ -132,7 +122,7 @@ export default class JsonRpcExceptionFilter implements ExceptionFilter {
 				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
 				this.logger.error(
-					`Unknown error in JSON-RPC handler: ${String(exception)}, response=${JSON.stringify(jsonRpcResponse)}`,
+					`Unknown error in JSON-RPC handler: ${String(exception)}, response=${JSON.stringify(jsonRpcResponse)}`
 				);
 				break;
 			}
@@ -141,4 +131,3 @@ export default class JsonRpcExceptionFilter implements ExceptionFilter {
 		response.status(httpStatus).json(jsonRpcResponse);
 	}
 }
-

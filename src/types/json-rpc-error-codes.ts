@@ -53,9 +53,7 @@ export const JSON_RPC_ERROR_NAMES: Record<JsonRpcErrorCode, string> = {
 };
 
 // Маппинг HTTP статусов на JsonRpcErrorCode
-export function mapHttpStatusToJsonRpcErrorCode(
-	status: number,
-): JsonRpcErrorCode {
+export function mapHttpStatusToJsonRpcErrorCode(status: number): JsonRpcErrorCode {
 	switch (status) {
 		case 401:
 			return JsonRpcErrorCode.UNAUTHORIZED;
@@ -105,4 +103,3 @@ export function getErrorStatus(error: Error | unknown): number | undefined {
 
 	return undefined;
 }
-

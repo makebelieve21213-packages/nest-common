@@ -1,8 +1,4 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
-import { HttpStatus } from "@nestjs/common";
-import { ArgumentsHost } from "@nestjs/common";
-import type { Request, Response } from "express";
-import { LoggerService } from "@makebelieve21213-packages/logger";
 import JsonRpcException from "src/errors/json-rpc.error";
 import JsonRpcExceptionFilter from "src/filters/json-rpc-exception.filter";
 import {
@@ -10,6 +6,11 @@ import {
 	JSON_RPC_ERROR_MESSAGES,
 	JSON_RPC_ERROR_NAMES,
 } from "src/types/json-rpc-error-codes";
+
+import type { LoggerService } from "@makebelieve21213-packages/logger";
+import { HttpStatus } from "@nestjs/common";
+import type { ArgumentsHost } from "@nestjs/common";
+import type { Request, Response } from "express";
 
 describe("JsonRpcExceptionFilter", () => {
 	let filter: JsonRpcExceptionFilter;
@@ -50,7 +51,7 @@ describe("JsonRpcExceptionFilter", () => {
 			const exception = new JsonRpcException(
 				JsonRpcErrorCode.INVALID_REQUEST,
 				"Invalid request",
-				{ details: "test" },
+				{ details: "test" }
 			);
 
 			filter.catch(exception, mockArgumentsHost);
@@ -104,7 +105,7 @@ describe("JsonRpcExceptionFilter", () => {
 		it("должен извлечь сообщение из response.error.message", () => {
 			const exception = new JsonRpcException(
 				JsonRpcErrorCode.METHOD_NOT_FOUND,
-				"Method not found",
+				"Method not found"
 			);
 
 			filter.catch(exception, mockArgumentsHost);
@@ -114,7 +115,7 @@ describe("JsonRpcExceptionFilter", () => {
 					error: expect.objectContaining({
 						message: "Method not found",
 					}),
-				}),
+				})
 			);
 		});
 	});
@@ -127,9 +128,7 @@ describe("JsonRpcExceptionFilter", () => {
 
 			filter.catch(error, mockArgumentsHost);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				jsonrpc: "2.0",
 				id: requestId,
@@ -144,7 +143,7 @@ describe("JsonRpcExceptionFilter", () => {
 			});
 			expect(mockLogger.error).toHaveBeenCalledWith(
 				expect.stringContaining("Something went wrong"),
-				error.stack,
+				error.stack
 			);
 		});
 
@@ -159,7 +158,7 @@ describe("JsonRpcExceptionFilter", () => {
 					error: expect.objectContaining({
 						message: JSON_RPC_ERROR_MESSAGES[JsonRpcErrorCode.INTERNAL_ERROR],
 					}),
-				}),
+				})
 			);
 		});
 
@@ -175,14 +174,13 @@ describe("JsonRpcExceptionFilter", () => {
 					error: expect.objectContaining({
 						code: JsonRpcErrorCode.INTERNAL_ERROR,
 					}),
-				}),
+				})
 			);
 		});
 
 		it("должен обработать Error с полем statusCode", () => {
 			const error = new Error("Not found");
-			(error as unknown as { statusCode: number }).statusCode =
-				HttpStatus.NOT_FOUND;
+			(error as unknown as { statusCode: number }).statusCode = HttpStatus.NOT_FOUND;
 
 			filter.catch(error, mockArgumentsHost);
 
@@ -196,9 +194,7 @@ describe("JsonRpcExceptionFilter", () => {
 
 			filter.catch(unknownException, mockArgumentsHost);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				jsonrpc: "2.0",
 				id: null,
@@ -210,32 +206,26 @@ describe("JsonRpcExceptionFilter", () => {
 					},
 				},
 			});
-			expect(mockLogger.error).toHaveBeenCalledWith(
-				expect.stringContaining("String error"),
-			);
+			expect(mockLogger.error).toHaveBeenCalledWith(expect.stringContaining("String error"));
 		});
 
 		it("должен обработать null как неизвестное исключение", () => {
 			filter.catch(null, mockArgumentsHost);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
 					error: expect.objectContaining({
 						code: JsonRpcErrorCode.INTERNAL_ERROR,
 					}),
-				}),
+				})
 			);
 		});
 
 		it("должен обработать undefined как неизвестное исключение", () => {
 			filter.catch(undefined, mockArgumentsHost);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(
-				HttpStatus.INTERNAL_SERVER_ERROR,
-			);
+			expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.INTERNAL_SERVER_ERROR);
 		});
 	});
 
@@ -249,7 +239,7 @@ describe("JsonRpcExceptionFilter", () => {
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
 					id: 789,
-				}),
+				})
 			);
 		});
 
@@ -262,7 +252,7 @@ describe("JsonRpcExceptionFilter", () => {
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
 					id: "request-123",
-				}),
+				})
 			);
 		});
 
@@ -275,7 +265,7 @@ describe("JsonRpcExceptionFilter", () => {
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
 					id: null,
-				}),
+				})
 			);
 		});
 
@@ -288,17 +278,14 @@ describe("JsonRpcExceptionFilter", () => {
 			expect(mockResponse.json).toHaveBeenCalledWith(
 				expect.objectContaining({
 					id: null,
-				}),
+				})
 			);
 		});
 	});
 
 	describe("logger context", () => {
 		it("должен установить контекст логгера при создании", () => {
-			expect(mockLogger.setContext).toHaveBeenCalledWith(
-				JsonRpcExceptionFilter.name,
-			);
+			expect(mockLogger.setContext).toHaveBeenCalledWith(JsonRpcExceptionFilter.name);
 		});
 	});
 });
-

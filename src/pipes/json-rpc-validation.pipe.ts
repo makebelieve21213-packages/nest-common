@@ -1,6 +1,7 @@
 import { PipeTransform, Injectable } from "@nestjs/common";
 import JsonRpcException from "src/errors/json-rpc.error";
 import { JsonRpcErrorCode } from "src/types/json-rpc-error-codes";
+
 import type { JsonRpcRequest } from "src/types/json-rpc-types";
 
 // Пайп для валидации JSON-RPC 2.0 запросов
@@ -12,7 +13,7 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		if (!value || typeof value !== "object") {
 			throw new JsonRpcException(
 				JsonRpcErrorCode.PARSE_ERROR,
-				"Invalid JSON-RPC request: request must be an object",
+				"Invalid JSON-RPC request: request must be an object"
 			);
 		}
 
@@ -35,11 +36,7 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 			if (val === null || val === undefined) {
 				return String(val);
 			}
-			if (
-				typeof val === "string" ||
-				typeof val === "number" ||
-				typeof val === "boolean"
-			) {
+			if (typeof val === "string" || typeof val === "number" || typeof val === "boolean") {
 				return String(val);
 			}
 			if (typeof val === "object") {
@@ -56,14 +53,13 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		if (request.jsonrpc !== "2.0") {
 			const id =
 				request.id !== undefined &&
-				(typeof request.id === "string" ||
-					typeof request.id === "number")
+				(typeof request.id === "string" || typeof request.id === "number")
 					? request.id
 					: null;
 			throw new JsonRpcException(
 				JsonRpcErrorCode.INVALID_REQUEST,
 				`Invalid JSON-RPC version. Expected "2.0", got "${safeStringify(request.jsonrpc)}"`,
-				{ requestId: id },
+				{ requestId: id }
 			);
 		}
 
@@ -71,14 +67,13 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		if (!request.method || typeof request.method !== "string") {
 			const id =
 				request.id !== undefined &&
-				(typeof request.id === "string" ||
-					typeof request.id === "number")
+				(typeof request.id === "string" || typeof request.id === "number")
 					? request.id
 					: null;
 			throw new JsonRpcException(
 				JsonRpcErrorCode.INVALID_REQUEST,
 				"Invalid JSON-RPC request: method is required and must be a string",
-				{ requestId: id },
+				{ requestId: id }
 			);
 		}
 
@@ -91,20 +86,18 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		) {
 			throw new JsonRpcException(
 				JsonRpcErrorCode.INVALID_REQUEST,
-				"Invalid JSON-RPC request: id must be a string, number, or null",
+				"Invalid JSON-RPC request: id must be a string, number, or null"
 			);
 		}
 
-		// Проверка типа params (должен быть object или undefined)
-		if (
-			request.params !== undefined &&
-			request.params !== null &&
-			typeof request.params !== "object"
-		) {
-			throw new JsonRpcException(
-				JsonRpcErrorCode.INVALID_REQUEST,
-				"Invalid JSON-RPC request: params must be an object or undefined",
-			);
+		// Проверка типа params (должен быть object или undefined, но не null)
+		if (request.params !== undefined) {
+			if (request.params === null || typeof request.params !== "object" || Array.isArray(request.params)) {
+				throw new JsonRpcException(
+					JsonRpcErrorCode.INVALID_REQUEST,
+					"Invalid JSON-RPC request: params must be an object or undefined"
+				);
+			}
 		}
 
 		return {
@@ -115,4 +108,3 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		} as JsonRpcRequest;
 	}
 }
-

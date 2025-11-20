@@ -15,11 +15,10 @@ export default class JsonRpcException extends HttpException {
 		rpcErrorCode: JsonRpcErrorCode,
 		message?: string,
 		data?: unknown,
-		httpStatus?: HttpStatus,
+		httpStatus?: HttpStatus
 	) {
 		const rpcMessage = message || JSON_RPC_ERROR_MESSAGES[rpcErrorCode];
-		const status =
-			httpStatus || JsonRpcException.getHttpStatus(rpcErrorCode);
+		const status = httpStatus || JsonRpcException.getHttpStatus(rpcErrorCode);
 
 		super(
 			{
@@ -30,7 +29,7 @@ export default class JsonRpcException extends HttpException {
 					...(data !== undefined && { data }),
 				},
 			},
-			status,
+			status
 		);
 
 		this.rpcErrorCode = rpcErrorCode;
@@ -50,34 +49,28 @@ export default class JsonRpcException extends HttpException {
 	// Создать JsonRpcException из стандартного HttpException
 	static fromHttpException(
 		exception: HttpException,
-		requestId: number | string | null = null,
+		requestId: number | string | null = null
 	): JsonRpcException {
 		const status = exception.getStatus();
 		const response = exception.getResponse();
 		const message =
 			typeof response === "string"
 				? response
-				: typeof response === "object" &&
-						response !== null &&
-						"message" in response
+				: typeof response === "object" && response !== null && "message" in response
 					? String(response.message)
 					: exception.message;
 
 		const rpcErrorCode = mapHttpStatusToJsonRpcErrorCode(status);
 
-		return new JsonRpcException(rpcErrorCode, message, { requestId });
+		return new JsonRpcException(rpcErrorCode, message, { requestId }, status);
 	}
 
 	// Создать JsonRpcException из обычной Error
-	static fromError(
-		error: Error,
-		requestId: number | string | null = null,
-	): JsonRpcException {
-		return new JsonRpcException(
-			JsonRpcErrorCode.INTERNAL_ERROR,
-			error.message,
-			{ requestId, name: error.name },
-		);
+	static fromError(error: Error, requestId: number | string | null = null): JsonRpcException {
+		return new JsonRpcException(JsonRpcErrorCode.INTERNAL_ERROR, error.message, {
+			requestId,
+			name: error.name,
+		});
 	}
 
 	// Получить HTTP статус из JSON-RPC кода ошибки
@@ -109,4 +102,3 @@ export default class JsonRpcException extends HttpException {
 		}
 	}
 }
-
