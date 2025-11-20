@@ -3,8 +3,10 @@ export { default as RpcValidationPipe } from "src/pipes/rpc-validation.pipe";
 export { default as FileValidationPipe } from "src/pipes/file-validation.pipe";
 export { default as QueryValidationPipe } from "src/pipes/query-validation.pipe";
 export { default as HeaderValidationPipe } from "src/pipes/header-validation.pipe";
+export { default as JsonRpcValidationPipe } from "src/pipes/json-rpc-validation.pipe";
 
 export { default as UnifiedExceptionFilter } from "src/filters/unified-exception.filter";
+export { default as JsonRpcExceptionFilter } from "src/filters/json-rpc-exception.filter";
 
 export { default as UnifiedInterceptor } from "src/interceptors/unified.interceptor";
 export { default as ResponseInterceptor } from "src/interceptors/response.interceptor";
@@ -16,8 +18,17 @@ export { default as HttpError } from "src/errors/http.error";
 export { default as RpcError } from "src/errors/rpc.error";
 export { default as SocketError } from "src/errors/socket.error";
 export { default as NestCommonError } from "src/errors/nest-common.error";
+export { default as JsonRpcException } from "src/errors/json-rpc.error";
 
 export { RpcErrorType } from "src/types/rpc-types";
+export {
+	JsonRpcErrorCode,
+	JSON_RPC_ERROR_MESSAGES,
+	JSON_RPC_ERROR_NAMES,
+	mapHttpStatusToJsonRpcErrorCode,
+	getErrorStatus,
+} from "src/types/json-rpc-error-codes";
+export type { JsonRpcRequest, JsonRpcResponse } from "src/types/json-rpc-types";
 
 export { default as BaseController } from "src/base/base.controller";
 

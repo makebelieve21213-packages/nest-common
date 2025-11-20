@@ -261,6 +261,53 @@ async publish(userId: string, event: SOCKET_EVENTS, payload: unknown) {
 }
 ```
 
+### JsonRpcException
+
+Класс исключений для JSON-RPC 2.0 протокола. Используется для обработки ошибок в формате JSON-RPC.
+
+**Расположение:** `src/errors/json-rpc.error.ts`
+
+**Наследование:** `HttpException` (NestJS) - для совместимости с NestJS фильтрами
+
+**Особенности:**
+- Поддерживает стандартные коды ошибок JSON-RPC 2.0
+- Автоматически маппит HTTP статусы на JSON-RPC коды ошибок
+- Поддерживает дополнительные данные в поле `data`
+- Может быть создан из `HttpException` или обычной `Error`
+- Возвращает ответ в формате JSON-RPC 2.0
+
+**Пример использования:**
+
+```typescript
+import { JsonRpcException, JsonRpcErrorCode } from "@packages/nest-common";
+
+// Создание исключения с кодом ошибки
+throw new JsonRpcException(
+    JsonRpcErrorCode.INVALID_REQUEST,
+    "Invalid request parameters",
+    { requestId: "123", details: "Missing required field" },
+);
+
+// Создание из HttpException
+const httpException = new HttpException("Not found", HttpStatus.NOT_FOUND);
+const rpcException = JsonRpcException.fromHttpException(httpException, "request-id");
+
+// Создание из обычной Error
+const error = new Error("Something went wrong");
+const rpcException = JsonRpcException.fromError(error, "request-id");
+```
+
+**Коды ошибок JSON-RPC 2.0:**
+- `PARSE_ERROR` (-32700) - Ошибка парсинга JSON
+- `INVALID_REQUEST` (-32600) - Невалидный запрос
+- `METHOD_NOT_FOUND` (-32601) - Метод не найден
+- `INVALID_PARAMS` (-32602) - Невалидные параметры
+- `INTERNAL_ERROR` (-32603) - Внутренняя ошибка сервера
+- `UNAUTHORIZED` (-32001) - Неавторизованный доступ
+- `FORBIDDEN` (-32002) - Доступ запрещен
+- `NOT_FOUND` (-32003) - Ресурс не найден
+- И другие кастомные коды (-32004 до -32099)
+
 ---
 
 ## 🛡️ Глобальные фильтры
@@ -270,6 +317,70 @@ async publish(userId: string, event: SOCKET_EVENTS, payload: unknown) {
 Единый глобальный фильтр для обработки HTTP и RPC ошибок. Автоматически определяет тип контекста и использует соответствующий обработчик.
 
 **Расположение:** `src/filters/unified-exception.filter.ts`
+
+### JsonRpcExceptionFilter
+
+Фильтр исключений для обработки ошибок в формате JSON-RPC 2.0. Преобразует все исключения NestJS в формат JSON-RPC 2.0.
+
+**Расположение:** `src/filters/json-rpc-exception.filter.ts`
+
+**Особенности:**
+- Автоматически извлекает `requestId` из тела запроса
+- Преобразует `JsonRpcException` в JSON-RPC формат ответа
+- Преобразует обычные `Error` в JSON-RPC формат с автоматическим определением статуса
+- Обрабатывает неизвестные типы исключений
+- Логирует все ошибки с контекстом
+
+**Использование:**
+
+```typescript
+import { Controller, Post, Body, UseFilters } from "@nestjs/common";
+import { JsonRpcExceptionFilter, JsonRpcValidationPipe } from "@packages/nest-common";
+import type { JsonRpcRequest } from "@packages/nest-common";
+
+@Controller("mcp")
+@UseFilters(JsonRpcExceptionFilter)
+export default class McpController extends BaseController {
+    constructor(private readonly logger: LoggerService) {
+        super();
+    }
+
+    @Post()
+    async handleJsonRpcRequest(
+        @Body(JsonRpcValidationPipe) request: JsonRpcRequest,
+    ) {
+        // Обработка запроса
+        if (request.method === "test.method") {
+            return {
+                jsonrpc: "2.0",
+                id: request.id,
+                result: { success: true },
+            };
+        }
+        
+        throw new JsonRpcException(
+            JsonRpcErrorCode.METHOD_NOT_FOUND,
+            `Method ${request.method} not found`,
+        );
+    }
+}
+```
+
+**Регистрация глобально:**
+
+```typescript
+// В main.ts
+import { JsonRpcExceptionFilter } from "@packages/nest-common";
+
+async function bootstrap() {
+    const app = await NestFactory.create(AppModule);
+    const logger = await connectLogger(app, "ServiceName");
+    
+    app.useGlobalFilters(new JsonRpcExceptionFilter(logger));
+    
+    await app.listen(PORT);
+}
+```
 
 **Регистрация:**
 
@@ -613,6 +724,45 @@ export default class ApiController extends BaseController {
         @Headers(new HeaderValidationPipe(ApiHeadersDto)) headers: ApiHeadersDto,
     ) {
         return await this.apiService.getData(headers);
+    }
+}
+```
+
+### JsonRpcValidationPipe
+
+Валидация JSON-RPC 2.0 запросов согласно спецификации протокола.
+
+**Расположение:** `src/pipes/json-rpc-validation.pipe.ts`
+
+**Особенности:**
+- Проверяет структуру запроса согласно спецификации JSON-RPC 2.0
+- Валидирует версию протокола (`jsonrpc: "2.0"`)
+- Проверяет наличие и тип поля `method` (должно быть строкой)
+- Валидирует тип поля `id` (должно быть string, number или null)
+- Валидирует тип поля `params` (должно быть object или undefined)
+- Игнорирует объекты с NestJS метаданными (constructorRef, handler, contextType)
+- Выбрасывает `JsonRpcException` при ошибках валидации
+
+**Использование:**
+
+```typescript
+import { Controller, Post, Body } from "@nestjs/common";
+import { JsonRpcValidationPipe, JsonRpcExceptionFilter } from "@packages/nest-common";
+import type { JsonRpcRequest } from "@packages/nest-common";
+
+@Controller("mcp")
+@UseFilters(JsonRpcExceptionFilter)
+export default class McpController extends BaseController {
+    @Post()
+    async handleJsonRpcRequest(
+        @Body(JsonRpcValidationPipe) request: JsonRpcRequest,
+    ) {
+        // Обработка JSON-RPC запроса
+        return {
+            jsonrpc: "2.0",
+            id: request.id,
+            result: { /* результат */ },
+        };
     }
 }
 ```

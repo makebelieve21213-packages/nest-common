@@ -1203,10 +1203,10 @@ async getGlobal() {
 - Lines: 100%
 
 **Тестовые сценарии:**
-- Все классы ошибок (HttpError, RpcError, SocketError, NestCommonError)
-- Глобальные фильтры (UnifiedExceptionFilter, HttpExceptionFilter, RpcExceptionFilter, WebSocketExceptionHandler)
+- Все классы ошибок (HttpError, RpcError, SocketError, NestCommonError, JsonRpcException)
+- Глобальные фильтры (UnifiedExceptionFilter, HttpExceptionFilter, RpcExceptionFilter, WebSocketExceptionHandler, JsonRpcExceptionFilter)
 - Перехватчики (UnifiedInterceptor, HttpLoggingInterceptor, RpcLoggingInterceptor, WebSocketLoggingInterceptor, ResponseInterceptor, SerializeInterceptor, CompressionInterceptor, RequestIdResponseInterceptor)
-- Пайпы валидации (HttpValidationPipe, RpcValidationPipe, FileValidationPipe, QueryValidationPipe, HeaderValidationPipe)
+- Пайпы валидации (HttpValidationPipe, RpcValidationPipe, FileValidationPipe, QueryValidationPipe, HeaderValidationPipe, JsonRpcValidationPipe)
 - Guards (JwtAuthGuard, ApiKeyGuard, RolesGuard, PermissionsGuard, RateLimitGuard, WebSocketAuthGuard)
 - Декораторы (Public, Roles, Permissions, ApiKey, Serialize)
 - Базовые классы (BaseController)
@@ -1219,6 +1219,7 @@ async getGlobal() {
 - Валидация файлов, query параметров и заголовков
 - Авторизация и аутентификация через guards
 - Rate limiting и circuit breaker паттерны
+- JSON-RPC 2.0 валидация и обработка ошибок
 
 ## Экспорты (index.ts)
 
@@ -1231,9 +1232,11 @@ export { default as RpcValidationPipe } from "src/pipes/rpc-validation.pipe";
 export { default as FileValidationPipe } from "src/pipes/file-validation.pipe";
 export { default as QueryValidationPipe } from "src/pipes/query-validation.pipe";
 export { default as HeaderValidationPipe } from "src/pipes/header-validation.pipe";
+export { default as JsonRpcValidationPipe } from "src/pipes/json-rpc-validation.pipe";
 
 // Filters
 export { default as UnifiedExceptionFilter } from "src/filters/unified-exception.filter";
+export { default as JsonRpcExceptionFilter } from "src/filters/json-rpc-exception.filter";
 
 // Interceptors
 export { default as UnifiedInterceptor } from "src/interceptors/unified.interceptor";
@@ -1247,10 +1250,19 @@ export { default as HttpError } from "src/errors/http.error";
 export { default as RpcError } from "src/errors/rpc.error";
 export { default as SocketError } from "src/errors/socket.error";
 export { default as NestCommonError } from "src/errors/nest-common.error";
+export { default as JsonRpcException } from "src/errors/json-rpc.error";
 
 // Types
 export { RpcErrorType } from "src/types/rpc-types";
 export type { StandardResponse } from "src/types/http-response";
+export {
+	JsonRpcErrorCode,
+	JSON_RPC_ERROR_MESSAGES,
+	JSON_RPC_ERROR_NAMES,
+	mapHttpStatusToJsonRpcErrorCode,
+	getErrorStatus,
+} from "src/types/json-rpc-error-codes";
+export type { JsonRpcRequest, JsonRpcResponse } from "src/types/json-rpc-types";
 
 // Base classes
 export { default as BaseController } from "src/base/base.controller";

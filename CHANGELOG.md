@@ -5,6 +5,17 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.0] - 2025-11-20
+
+### Добавлено
+- JsonRpcException - класс исключений для JSON-RPC 2.0 протокола
+- JsonRpcExceptionFilter - фильтр для обработки исключений в формате JSON-RPC 2.0
+- JsonRpcValidationPipe - пайп для валидации JSON-RPC 2.0 запросов
+- Типы JsonRpcRequest и JsonRpcResponse для работы с JSON-RPC протоколом
+- Коды ошибок JSON-RPC 2.0 (JsonRpcErrorCode) с маппингом HTTP статусов
+- Утилиты для работы с JSON-RPC ошибками (mapHttpStatusToJsonRpcErrorCode, getErrorStatus)
+- Полное покрытие тестами для всех новых классов
+
 ## [1.0.1] - 2025-11-19
 
 ### Исправлено
