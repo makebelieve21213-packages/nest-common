@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "@jest/globals";
+import { HttpStatus } from "@nestjs/common";
 import JsonRpcException from "src/errors/json-rpc.error";
 import JsonRpcExceptionFilter from "src/filters/json-rpc-exception.filter";
 import {
@@ -8,7 +9,6 @@ import {
 } from "src/types/json-rpc-error-codes";
 
 import type { LoggerService } from "@makebelieve21213-packages/logger";
-import { HttpStatus } from "@nestjs/common";
 import type { ArgumentsHost } from "@nestjs/common";
 import type { Request, Response } from "express";
 

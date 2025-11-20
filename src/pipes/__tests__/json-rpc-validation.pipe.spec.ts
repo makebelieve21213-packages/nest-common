@@ -357,5 +357,58 @@ describe("JsonRpcValidationPipe", () => {
 				expect(rpcData).toEqual({ requestId: 42 });
 			}
 		});
+
+		it("должен обработать jsonrpc null в сообщении об ошибке", () => {
+			const request = {
+				jsonrpc: null,
+				id: 1,
+				method: "test.method",
+			};
+
+			expect(() => pipe.transform(request)).toThrow(JsonRpcException);
+		});
+
+		it("должен обработать jsonrpc undefined в сообщении об ошибке", () => {
+			const request = {
+				jsonrpc: undefined,
+				id: 1,
+				method: "test.method",
+			};
+
+			expect(() => pipe.transform(request)).toThrow(JsonRpcException);
+		});
+
+		it("должен обработать jsonrpc объект в сообщении об ошибке", () => {
+			const request = {
+				jsonrpc: { version: "2.0" },
+				id: 1,
+				method: "test.method",
+			};
+
+			expect(() => pipe.transform(request)).toThrow(JsonRpcException);
+		});
+
+		it("должен обработать jsonrpc с циклической ссылкой в сообщении об ошибке", () => {
+			const circularObj: Record<string, unknown> = { version: "2.0" };
+			circularObj.self = circularObj;
+
+			const request = {
+				jsonrpc: circularObj,
+				id: 1,
+				method: "test.method",
+			};
+
+			expect(() => pipe.transform(request)).toThrow(JsonRpcException);
+		});
+
+		it("должен обработать jsonrpc функцию в сообщении об ошибке", () => {
+			const request = {
+				jsonrpc: (() => "2.0") as unknown,
+				id: 1,
+				method: "test.method",
+			};
+
+			expect(() => pipe.transform(request)).toThrow(JsonRpcException);
+		});
 	});
 });

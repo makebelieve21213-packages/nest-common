@@ -92,7 +92,11 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 
 		// Проверка типа params (должен быть object или undefined, но не null)
 		if (request.params !== undefined) {
-			if (request.params === null || typeof request.params !== "object" || Array.isArray(request.params)) {
+			if (
+				request.params === null ||
+				typeof request.params !== "object" ||
+				Array.isArray(request.params)
+			) {
 				throw new JsonRpcException(
 					JsonRpcErrorCode.INVALID_REQUEST,
 					"Invalid JSON-RPC request: params must be an object or undefined"
