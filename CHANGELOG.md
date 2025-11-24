@@ -5,7 +5,7 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
-## [1.1.2] - 2025-01-XX
+## [1.1.2] - 2025-11-24
 
 ### Исправлено
 - Исправлена конфигурация Dependabot: поле `day` в расписании изменено с числового значения на строковое (monday)
