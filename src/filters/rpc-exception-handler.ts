@@ -97,9 +97,7 @@ export default class RpcExceptionFilter {
 		// Подтверждаем сообщение, чтобы оно удалилось из очереди
 		channel.ack(msg);
 
-		this.loggerService.warn(
-			`Message sent to DLX [pattern: ${pattern}, error: ${rpcError.message}]`
-		);
+		this.loggerService.warn(`Message sent to DLX [pattern: ${pattern}, error: ${rpcError.message}]`);
 
 		// Выбрасываем ошибку для отправки клиенту
 		throw rpcError;

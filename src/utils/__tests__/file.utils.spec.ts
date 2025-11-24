@@ -4,11 +4,7 @@ import type { MulterFile } from "src/types/file-types";
 
 describe("file.utils", () => {
 	describe("validateFile", () => {
-		const createMockFile = (
-			size: number,
-			mimetype: string,
-			originalname: string
-		): MulterFile => ({
+		const createMockFile = (size: number, mimetype: string, originalname: string): MulterFile => ({
 			fieldname: "file",
 			originalname,
 			encoding: "7bit",

@@ -1,97 +1,95 @@
-# @makebelieve21213-packages/nest-common - LLM Context
+# @makebelieve21213-packages/nest-common - Документация для ИИ
 
 ## Краткое описание
-Общий ESM пакет с утилитами для NestJS микросервисов проекта NakolenkeChain. Предоставляет единую систему обработки ошибок, валидации, логирования и базовые классы для HTTP, RPC и WebSocket контекстов. Все ошибки автоматически преобразуются между контекстами с сохранением типа и статус-кода.
+
+Общий ESM пакет с утилитами для NestJS микросервисов. Предоставляет единую систему обработки ошибок, валидации, логирования и базовые классы для HTTP, RPC и WebSocket контекстов. Все ошибки автоматически преобразуются между контекстами с сохранением типа и статус-кода.
 
 ## Технические детали пакета
+
 - **Тип пакета**: ESM (`"type": "module"` в package.json)
 - **Сборка**: TypeScript → tsc → tsc-alias → tsc-esm-fix
 - **Module Resolution**: `bundler` (для гибкой работы с ESM и post-build инструментами)
 - **Target**: ES2023
 - **Module**: ESNext
 
-## Структура
+## Структура пакета
 
 ```
 src/
-├── errors/                          # Классы ошибок для разных контекстов
-│   ├── http.error.ts                   # HttpError - для HTTP контекста (api-service)
+├── errors/                             # Классы ошибок для разных контекстов
+│   ├── http.error.ts                   # HttpError - для HTTP контекста
 │   ├── rpc.error.ts                    # RpcError - для RabbitMQ RPC контекста
 │   ├── socket.error.ts                 # SocketError - для WebSocket контекста
-│   ├── nest-common.error.ts            # NestCommonError - базовый класс ошибок пакета
-│   └── __tests__/                      # Тесты классов ошибок
-├── filters/                        # Глобальные фильтры обработки ошибок
+│   ├── json-rpc.error.ts               # JsonRpcException - для JSON-RPC 2.0
+│   └── nest-common.error.ts            # NestCommonError - базовый класс ошибок пакета
+│
+├── filters/                            # Глобальные фильтры обработки ошибок
 │   ├── unified-exception.filter.ts     # UnifiedExceptionFilter - единый фильтр для HTTP и RPC
+│   ├── json-rpc-exception.filter.ts    # JsonRpcExceptionFilter - фильтр для JSON-RPC 2.0
 │   ├── http-exception-handler.ts       # HttpExceptionFilter - обработчик HTTP ошибок
-│   ├── rpc-exception-handler.ts        # RpcExceptionFilter - обработчик RPC ошибок с retry/DLX
-│   └── __tests__/                      # Тесты фильтров
-├── interceptors/                  # Перехватчики для логирования запросов
+│   └── rpc-exception-handler.ts        # RpcExceptionFilter - обработчик RPC ошибок с retry/DLX
+│
+├── interceptors/                       # Перехватчики для логирования запросов
 │   ├── unified.interceptor.ts          # UnifiedInterceptor - единый перехватчик для HTTP, RPC и WebSocket
-│   ├── http-logging.interceptor.ts     # HttpLoggingInterceptor - перехватчик логирования HTTP запросов
-│   ├── rpc-logging.interceptor.ts      # RpcLoggingInterceptor - перехватчик логирования RPC запросов
-│   ├── websocket-logging.interceptor.ts # WebSocketLoggingInterceptor - перехватчик логирования WebSocket запросов
 │   ├── response.interceptor.ts         # ResponseInterceptor - стандартизация формата HTTP ответов
-│   ├── serialize.interceptor.ts        # SerializeInterceptor - сериализация ответов с исключением чувствительных данных
+│   ├── serialize.interceptor.ts        # SerializeInterceptor - сериализация ответов
 │   ├── compression.interceptor.ts      # CompressionInterceptor - автоматическое сжатие больших ответов
-│   ├── request-id-response.interceptor.ts # RequestIdResponseInterceptor - добавление Request ID в заголовки ответов
-│   └── __tests__/                      # Тесты перехватчиков
-├── base/                           # Базовые классы
-│   ├── base.controller.ts              # BaseController - базовый контроллер
-│   └── __tests__/                      # Тесты базовых классов
-├── guards/                        # Guards для контроля доступа
+│   └── request-id-response.interceptor.ts # RequestIdResponseInterceptor - добавление Request ID
+│
+├── base/                               # Базовые классы
+│   └── base.controller.ts              # BaseController - базовый контроллер
+│
+├── guards/                             # Guards для контроля доступа
 │   ├── jwt-auth.guard.ts               # JwtAuthGuard - проверка JWT токена
 │   ├── api-key.guard.ts                # ApiKeyGuard - проверка API ключа
 │   ├── roles.guard.ts                  # RolesGuard - проверка ролей пользователя
 │   ├── permissions.guard.ts            # PermissionsGuard - проверка разрешений пользователя
 │   ├── rate-limit.guard.ts             # RateLimitGuard - ограничение частоты запросов
-│   ├── websocket-auth.guard.ts         # WebSocketAuthGuard - проверка аутентификации WebSocket
-│   └── __tests__/                      # Тесты guards
-├── decorators/                    # Декораторы для метаданных
+│   └── websocket-auth.guard.ts         # WebSocketAuthGuard - проверка аутентификации WebSocket
+│
+├── decorators/                         # Декораторы для метаданных
 │   ├── public.decorator.ts             # @Public() - пометка публичного эндпоинта
 │   ├── roles.decorator.ts              # @Roles() - указание требуемых ролей
 │   ├── permissions.decorator.ts        # @Permissions() - указание требуемых разрешений
 │   ├── api-key.decorator.ts            # @ApiKey() - пометка эндпоинта как требующего API ключ
-│   ├── serialize.decorator.ts          # @Serialize() - указание DTO для сериализации
-│   └── __tests__/                      # Тесты декораторов
-├── pipes/                          # Пайпы валидации
+│   └── serialize.decorator.ts          # @Serialize() - указание DTO для сериализации
+│
+├── pipes/                              # Пайпы валидации
 │   ├── http-validation.pipe.ts         # HttpValidationPipe - валидация DTO для HTTP
 │   ├── rpc-validation.pipe.ts          # RpcValidationPipe - валидация DTO для RabbitMQ
+│   ├── json-rpc-validation.pipe.ts     # JsonRpcValidationPipe - валидация JSON-RPC 2.0 запросов
 │   ├── file-validation.pipe.ts         # FileValidationPipe - валидация загруженных файлов
 │   ├── query-validation.pipe.ts        # QueryValidationPipe - валидация query параметров
-│   ├── header-validation.pipe.ts       # HeaderValidationPipe - валидация заголовков
-│   └── __tests__/                      # Тесты пайпов
-├── utils/                          # Утилиты
+│   └── header-validation.pipe.ts       # HeaderValidationPipe - валидация заголовков
+│
+├── utils/                              # Утилиты
 │   ├── env-validator.ts                # validateEnv - валидация env переменных с Joi
-│   ├── context.utils.ts                # Утилиты для работы с контекстом (getUserFromContext, getIpFromContext, etc.)
-│   ├── cors.utils.ts                    # createCorsOptions - создание опций CORS
+│   ├── context.utils.ts                # Утилиты для работы с контекстом
+│   ├── cors.utils.ts                   # createCorsOptions - создание опций CORS
 │   ├── compression.utils.ts            # createCompressionOptions - создание опций compression
-│   ├── versioning.utils.ts              # createVersioningOptions - создание опций версионирования
-│   ├── file.utils.ts                   # Утилиты для работы с файлами (validateFile, getFileExtension, formatFileSize)
+│   ├── versioning.utils.ts             # createVersioningOptions - создание опций версионирования
+│   ├── file.utils.ts                   # Утилиты для работы с файлами
 │   ├── circuit-breaker.ts              # CircuitBreakerService - реализация паттерна Circuit Breaker
-│   ├── get-service-path.ts             # getServicePath - определение пути в сервисе
-│   └── __tests__/                      # Тесты утилит
-├── types/                          # Типы
+│   └── get-service-path.ts             # getServicePath - определение пути в сервисе
+│
+├── types/                              # Типы
 │   ├── http-response.ts                # Типы HTTP ответов (ErrorResponse, StandardResponse)
 │   ├── rpc-types.ts                    # Типы RPC запросов/ответов
+│   ├── json-rpc-types.ts               # Типы JSON-RPC 2.0 запросов/ответов
+│   ├── json-rpc-error-codes.ts         # Коды ошибок JSON-RPC 2.0
 │   ├── error-types.ts                  # Enum типов ошибок (ErrorType)
 │   ├── context-types.ts                # Enum типов контекстов (ContextType) и типы пользователя
-│   ├── file-types.ts                   # Типы файлов (MulterFile)
-│   ├── file-validation-types.ts        # Типы для валидации файлов (FileValidationOptions, FileValidationResult)
-│   ├── circuit-breaker-types.ts        # Типы для Circuit Breaker (CircuitBreakerState, CircuitBreakerOptions)
-│   ├── cors-types.ts                   # Типы для CORS (CorsOptionsConfig)
-│   ├── compression-types.ts           # Типы для compression (CompressionOptionsConfig)
-│   ├── versioning-types.ts             # Типы для версионирования (VersioningOptionsConfig, VersioningStrategy)
-│   ├── get-service-path-types.ts       # Типы для getServicePath (GetServicePathOptions, ServicePathType)
-│   └── guard-types.ts                  # Типы для guards (RateLimitInfo)
-└── index.ts                         # Публичный API (экспорты)
+│   └── [другие типы]                   # Типы для файлов, circuit breaker, CORS, compression, versioning
+│
+└── index.ts                            # Публичный API (экспорты)
 ```
 
 ## Система обработки ошибок
 
 Пакет предоставляет единую систему обработки ошибок для трех типов контекстов:
-- **HTTP** - для HTTP контроллеров (api-service)
-- **RPC** - для RabbitMQ RPC запросов (analytics-service, data-service, token-service)
-- **WebSocket** - для Socket.io соединений (api-service)
+- **HTTP** - для HTTP контроллеров
+- **RPC** - для RabbitMQ RPC запросов
+- **WebSocket** - для Socket.io соединений
 
 Все ошибки автоматически преобразуются между контекстами с сохранением типа и статус-кода.
 
@@ -104,1278 +102,161 @@ src/
 
 ## Основные компоненты
 
-### HttpError
+### UnifiedExceptionFilter
 
-Класс ошибок для HTTP контекста. Используется в `api-service` для обработки HTTP запросов.
+Единый глобальный фильтр для обработки HTTP и RPC ошибок. Автоматически определяет тип контекста и использует соответствующий обработчик.
 
-**Расположение:** `src/errors/http.error.ts`
+**Регистрация:**
+```typescript
+app.useGlobalFilters(new UnifiedExceptionFilter(logger, dlxExchange)); // dlxExchange опционально
+```
 
-**Наследование:** `HttpException` (NestJS)
+**Логика работы:**
+- HTTP контекст → `HttpExceptionFilter.handleException()` → преобразует в `HttpError`
+- RPC контекст → `RpcExceptionFilter.handleException()` → преобразует в `RpcError` с retry/DLX логикой
 
-**Особенности:**
+### UnifiedInterceptor
+
+Единый глобальный перехватчик для логирования HTTP и RPC запросов. Автоматически определяет тип контекста и использует соответствующий обработчик.
+
+**Регистрация:**
+```typescript
+app.useGlobalInterceptors(new UnifiedInterceptor(logger));
+```
+
+**Логика работы:**
+- HTTP контекст → `HttpLoggingInterceptor.intercept()`
+- RPC контекст → `RpcLoggingInterceptor.intercept()`
+- WebSocket контекст → `WebSocketLoggingInterceptor.intercept()`
+
+### Классы ошибок
+
+**HttpError** - для HTTP контекста
 - Автоматически преобразует `RpcException`/`RpcError` в HTTP ошибку
-- Автоматически преобразует `SocketError` в HTTP ошибку
 - Сохраняет правильный HTTP статус-код
-- Включает stack trace в ответе, если он доступен в исходной ошибке
+- Метод: `HttpError.fromUnknown(error, descriptionPrefix?)`
 
-**Методы:**
-- `HttpError.fromUnknown(error: unknown, descriptionPrefix?: string)` - преобразует любую ошибку в HttpError
-  - При преобразовании `HttpException` с массивом сообщений сохраняет оригинальный массив в `getResponse()`
-  - Для внутреннего `message` использует строку (массив объединяется через `"; "`)
-  - Опциональный `descriptionPrefix` добавляется к сообщению ошибки
-  - Обрабатывает HttpError, HttpException, RpcException/RpcError, SocketError, Error, объекты с полем message, неизвестные типы
-
-**Использование:**
-```typescript
-// В HTTP контроллере (БЕЗ catch блока)
-@Get("/analytics/global")
-async getGlobal() {
-    // Ошибка автоматически обработается UnifiedExceptionFilter
-    return await this.analyticsService.getGlobalData();
-}
-```
-
-### RpcError
-
-Класс ошибок для RabbitMQ RPC контекста. Используется в `analytics-service`, `data-service`, `token-service`.
-
-**Расположение:** `src/errors/rpc.error.ts`
-
-**Наследование:** `RpcException` (NestJS)
-
-**Особенности:**
+**RpcError** - для RabbitMQ RPC контекста
 - Автоматически определяет тип ошибки (временная/постоянная)
-- Сохраняет статус-код для будущего преобразования в HTTP
-- Сериализуется через RabbitMQ с сохранением типа и сообщения
 - Используется в `RpcExceptionFilter` для retry/DLX логики
+- Метод: `RpcError.fromUnknown(error)`
+- Метод: `isTransient(): boolean`
 
-**Типы ошибок:**
+**SocketError** - для WebSocket контекста
+- Используется для обработки ошибок при отправке событий через Socket.io
+- Метод: `SocketError.fromUnknown(error)`
 
-**Временные (retry):**
-- `RPC_TIMEOUT` - таймаут соединения
-- `SERVICE_UNAVAILABLE` - сервис недоступен
-- `RPC_SERVICE_UNAVAILABLE` - RPC сервис недоступен
+**JsonRpcException** - для JSON-RPC 2.0 протокола
+- Поддерживает стандартные коды ошибок JSON-RPC 2.0
+- Автоматически маппит HTTP статусы на JSON-RPC коды ошибок
+- Методы: `JsonRpcException.fromHttpException()`, `JsonRpcException.fromError()`
 
-**Постоянные (DLX сразу):**
-- `BAD_REQUEST` - неправильный запрос
-- `UNAUTHORIZED` - ошибка авторизации
-- `FORBIDDEN` - ошибка доступа
-- `NOT_FOUND` - ресурс не найден
-- `VALIDATION_ERROR` - ошибка валидации
-- `RPC_VALIDATION_ERROR` - ошибка валидации RPC
+### BaseController
 
-**Методы:**
-- `isTransient(): boolean` - проверяет, является ли ошибка временной (требует retry)
-- `RpcError.fromUnknown(error: unknown)` - преобразует любую ошибку в RpcError
-  - Автоматически распознает ошибки с свойством `isAxiosError` и преобразует их с сохранением типа и статуса
-  - Определяет тип ошибки из сообщения через `detectErrorType()`
-  - Классифицирует как временную или постоянную
-  - Обрабатывает сериализованные объекты ошибок из RabbitMQ
+Базовый контроллер для всех контроллеров проекта. Предоставляет метод `acknowledge(ctx: RmqContext)` для подтверждения RPC сообщений.
 
-**Использование:**
+### Пайпы валидации
+
+- **HttpValidationPipe** - валидация DTO для HTTP контроллеров
+- **RpcValidationPipe** - валидация DTO для RabbitMQ (автоматически извлекает correlationId и correlationTimestamp)
+- **JsonRpcValidationPipe** - валидация JSON-RPC 2.0 запросов
+- **FileValidationPipe** - валидация загруженных файлов
+- **QueryValidationPipe** - валидация query параметров
+- **HeaderValidationPipe** - валидация заголовков
+
+### Guards
+
+- **JwtAuthGuard** - проверка JWT токена
+- **ApiKeyGuard** - проверка API ключа (работает с декоратором `@ApiKey()`)
+- **RolesGuard** - проверка ролей пользователя (работает с декоратором `@Roles()`)
+- **PermissionsGuard** - проверка разрешений пользователя (работает с декоратором `@Permissions()`)
+- **RateLimitGuard** - ограничение частоты запросов
+- **WebSocketAuthGuard** - проверка аутентификации WebSocket
+
+### Декораторы
+
+- `@Public()` - пометка публичного эндпоинта
+- `@Roles(...)` - указание требуемых ролей
+- `@Permissions(...)` - указание требуемых разрешений
+- `@ApiKey()` - пометка эндпоинта как требующего API ключ
+- `@Serialize(DtoClass)` - указание DTO для сериализации ответа
+
+### Утилиты
+
+- `validateEnv(env, requiredKeys)` - валидация переменных окружения с Joi
+- `getUserFromContext(context)` - извлечение пользователя из контекста
+- `getIpFromContext(context)` - извлечение IP адреса из контекста
+- `getRequestIdFromContext(context)` - извлечение Request ID из контекста
+- `createCorsOptions(options?)` - создание опций CORS
+- `createCompressionOptions(options?)` - создание опций compression
+- `createVersioningOptions(options)` - создание опций версионирования
+- `validateFile(file, options?)` - валидация файла
+- `CircuitBreakerService` - реализация паттерна Circuit Breaker
+- `getServicePath(options)` - определение пути в сервисе
+
+## Порядок использования
+
+### HTTP контроллер
+
 ```typescript
-// В RPC контроллере (БЕЗ catch блока)
-@MessagePattern(ROUTING_KEYS.ANALYTICS_GLOBAL)
-async getGlobalData(
-    @Payload() _: GlobalDataIncomeDto,
-    @Ctx() ctx: RmqContext,
-): Promise<GlobalDataOutcomeDto> {
-    // Ошибка автоматически обработается UnifiedExceptionFilter
-    const data = await this.analyticsService.getGlobalData();
-    this.acknowledge(ctx);
-    return data;
+@Controller("test")
+export default class TestController extends BaseController {
+    @Get("data")
+    async getData() {
+        // БЕЗ try-catch - глобальный фильтр все обработает
+        return await this.testService.getData();
+    }
 }
 ```
 
-**Интеграция с AxiosError:**
-`RpcError.fromUnknown()` автоматически распознает ошибки с свойством `isAxiosError` и преобразует их в `RpcError` с сохранением типа ошибки и статус-кода из оригинальной Axios ошибки.
+### RPC контроллер
 
-### SocketError
-
-Класс ошибок для WebSocket контекста. Используется в `api-service` для обработки ошибок Socket.io.
-
-**Расположение:** `src/errors/socket.error.ts`
-
-**Наследование:** `HttpException` (NestJS) - для совместимости с HTTP фильтрами
-
-**Особенности:**
-- Используется для обработки ошибок при отправке событий через Socket.io
-- Логируется и сохраняется в Redis
-- Может быть отправлена на фронт через событие `SOCKET_EVENTS.ERROR`
-- Не связана с HTTP или RPC ошибками
-
-**Методы:**
-- `SocketError.fromUnknown(error: unknown)` - преобразует любую ошибку в SocketError
-  - Обрабатывает SocketError, Error, неизвестные типы
-
-**Использование:**
 ```typescript
-// В SocketGateway
+@Controller()
+export default class TestController extends BaseController {
+    @MessagePattern("test.pattern")
+    async getData(@Payload() dto: TestRequestDto, @Ctx() ctx: RmqContext) {
+        const data = await this.testService.getData();
+        this.acknowledge(ctx);
+        return data;
+    }
+}
+```
+
+### WebSocket Gateway
+
+```typescript
 async publish(userId: string, event: SOCKET_EVENTS, payload: unknown) {
     try {
         await this.io.timeout(5000).to(`user:${userId}`).emitWithAck(event, payload);
     } catch (error) {
         const socketError = SocketError.fromUnknown(error);
         this.logger.error(`Ошибка отправки события: ${socketError.message}`);
-        await this.redisService.hSet(REDIS_H_KEYS.SOCKET_ERROR, userId, socketError.message);
         throw socketError;
     }
 }
 ```
 
-### UnifiedExceptionFilter
-
-Единый глобальный фильтр для обработки HTTP и RPC ошибок. Автоматически определяет тип контекста и использует соответствующий обработчик.
-
-**Расположение:** `src/filters/unified-exception.filter.ts`
-
-**Регистрация:**
-```typescript
-// В main.ts микросервиса
-import { UnifiedExceptionFilter } from "@packages/nest-common";
-
-app.useGlobalFilters(
-    new UnifiedExceptionFilter(logger, dlxExchange), // dlxExchange опционально
-);
-```
-
-**Логика работы:**
-1. Определяет тип контекста (HTTP или RPC)
-2. Использует соответствующий обработчик:
-   - **HTTP контекст** → `HttpExceptionFilter.handleException()`
-   - **RPC контекст** → `RpcExceptionFilter.handleException()`
-3. Обработчики преобразуют ошибки и формируют ответы
-
-**Внутренние обработчики:**
-
-- **HttpExceptionFilter** (`src/filters/http-exception-handler.ts`) - обрабатывает HTTP ошибки
-  - Преобразует любую ошибку в `HttpError` через `HttpError.fromUnknown()`
-  - Логирует ошибку с типом и статусом
-  - Формирует JSON ответ для фронтенда
-  - Добавляет stack trace в ответ, если он доступен
-
-- **RpcExceptionFilter** (`src/filters/rpc-exception-handler.ts`) - обрабатывает RPC ошибки с поддержкой retry/DLX
-  - Преобразует любую ошибку в `RpcError` через `RpcError.fromUnknown()`
-  - Определяет тип ошибки (временная/постоянная)
-  - Применяет retry/DLX логику:
-    - **Постоянная ошибка** → сразу в DLX + throw RpcError
-    - **Временная ошибка** → retry очередь (если попыток < MAX_RETRIES) или DLX
-  - Для ошибок валидации делает NACK без requeue
-
-**Формат HTTP ответа:**
-```json
-{
-    "statusCode": 500,
-    "timestamp": "2024-01-01T00:00:00.000Z",
-    "path": "/api/analytics/global",
-    "error": "INTERNAL_SERVER_ERROR",
-    "message": "Ошибка получения данных",
-    "stack": "..." // Если доступен в исходной ошибке
-}
-```
-
-### UnifiedInterceptor
-
-Единый глобальный перехватчик для логирования HTTP и RPC запросов. Автоматически определяет тип контекста и использует соответствующий обработчик.
-
-**Расположение:** `src/interceptors/unified.interceptor.ts`
-
-**Особенности:**
-- Автоматически определяет тип контекста (HTTP или RPC)
-- Использует соответствующий обработчик для логирования
-- Логирует все входящие запросы с метриками производительности
-- Работает с любыми эндпоинтами автоматически
-
-**Регистрация:**
-```typescript
-// В main.ts микросервиса
-import { UnifiedInterceptor } from "@packages/nest-common";
-import { LoggerService } from "@makebelieve21213-packages/logger";
-
-const logger = await app.resolve(LoggerService);
-app.useGlobalInterceptors(new UnifiedInterceptor(logger));
-```
-
-**Логика работы:**
-1. Определяет тип контекста (HTTP или RPC)
-2. Использует соответствующий обработчик:
-   - **HTTP контекст** → `HttpLoggingInterceptor.intercept()`
-   - **RPC контекст** → `RpcLoggingInterceptor.intercept()`
-3. Обработчики логируют запросы с метриками времени выполнения
-
-**Внутренние обработчики:**
-
-- **HttpLoggingInterceptor** (`src/interceptors/http-logging.interceptor.ts`) - логирует HTTP запросы
-  - Логирует все входящие HTTP запросы (метод, URL, IP, User-Agent)
-  - Логирует успешные запросы (метод, URL, статус-код, время выполнения)
-  - Логирует неудачные запросы (метод, URL, статус-код, время выполнения, сообщение об ошибке)
-  - Использует `HttpStatus` enum из NestJS вместо хардкода статус-кодов
-  - Обрабатывает отсутствующие данные (fallback значения)
-
-- **RpcLoggingInterceptor** (`src/interceptors/rpc-logging.interceptor.ts`) - логирует RPC запросы
-  - Логирует все входящие RPC запросы (pattern)
-  - Логирует успешные запросы (pattern, время выполнения)
-  - Логирует неудачные запросы (pattern, время выполнения, сообщение об ошибке)
-
-- **WebSocketLoggingInterceptor** (`src/interceptors/websocket-logging.interceptor.ts`) - логирует WebSocket запросы
-  - Логирует все входящие WebSocket события (pattern, client ID)
-  - Логирует успешные события (pattern, client ID, время выполнения)
-  - Логирует неудачные события (pattern, client ID, время выполнения, сообщение об ошибке)
-  - Обрабатывает отсутствующие данные (fallback значения для pattern и client ID)
-
-**Формат логов HTTP:**
-```
-[HTTP] Incoming request [GET /api/analytics/global] from 127.0.0.1 (Mozilla/5.0...)
-[HTTP] Request completed [GET /api/analytics/global] 200 45ms
-[HTTP] Request failed [GET /api/analytics/global] 500 120ms - Internal server error
-```
-
-**Формат логов RPC:**
-```
-[RPC] Incoming request [pattern: analytics.global]
-[RPC] Request completed [pattern: analytics.global, duration: 45ms]
-[RPC] Request failed [pattern: analytics.global, duration: 120ms, error: Service unavailable]
-```
-
-### BaseController
-
-Базовый контроллер для всех контроллеров проекта.
-
-**Расположение:** `src/base/base.controller.ts`
-
-**Особенности:**
-- Предоставляет общие методы для HTTP и RPC контроллеров
-- Метод `acknowledge(ctx: RmqContext)` для подтверждения RPC сообщений
-- Автоматически настраивает контекст логирования на имя класса контроллера через конструктор
-
-**Методы:**
-- `protected acknowledge(ctx: RmqContext): void` - отправляет acknowledge сообщение в RabbitMQ
-
-**Использование:**
-```typescript
-import { BaseController } from "@packages/nest-common";
-
-@Controller("analytics")
-export default class AnalyticsController extends BaseController {
-    constructor(
-        private readonly analyticsService: AnalyticsService,
-        logger: LoggerService,
-    ) {
-        super(logger);
-    }
-
-    @Get("global")
-    async getGlobal() {
-        // БЕЗ try-catch - глобальный фильтр все обработает
-        return await this.analyticsService.getGlobalData();
-    }
-}
-```
-
-### HttpValidationPipe
-
-Валидация DTO для HTTP контроллеров с использованием `class-validator`.
-
-**Расположение:** `src/pipes/http-validation.pipe.ts`
-
-**Особенности:**
-- Автоматическое преобразование plain objects в DTO экземпляры через `plainToInstance` с `enableImplicitConversion: true`
-- Валидация с `whitelist: true` и `forbidNonWhitelisted: true`
-- Выбрасывает `BadRequestException` при ошибках валидации
-- Сообщения об ошибках объединяются через `"; "`
-
-**Использование:**
-```typescript
-import { HttpValidationPipe } from "@packages/nest-common";
-
-@Post("create")
-@UsePipes(new HttpValidationPipe(CreateDto))
-async create(@Body() dto: CreateDto) {
-    return await this.service.create(dto);
-}
-```
-
-### RpcValidationPipe
-
-Валидация DTO для RabbitMQ микросервисов с использованием `class-validator`.
-
-**Расположение:** `src/pipes/rpc-validation.pipe.ts`
-
-**Особенности:**
-- Автоматическое преобразование plain objects в DTO экземпляры через `plainToInstance` с `enableImplicitConversion: true`
-- Обрабатывает случаи, когда value может быть `undefined` или `null` (для пустых DTO передает пустой объект)
-- Автоматически извлекает и исключает `correlationId` и `correlationTimestamp` из сообщения перед валидацией (для поддержки идемпотентности)
-- Использует префикс `_` для неиспользуемых переменных при деструктуризации (стандартная практика TypeScript)
-- Валидация с `whitelist: true` и `forbidNonWhitelisted: true`
-- Выбрасывает `RpcException` при ошибках валидации
-- Сообщения об ошибках объединяются через `"; "`
-
-**Использование:**
-```typescript
-import { RpcValidationPipe } from "@packages/nest-common";
-
-@MessagePattern(ROUTING_KEYS.ANALYTICS_GLOBAL)
-@UsePipes(new RpcValidationPipe(GlobalDataIncomeDto))
-async getGlobalData(@Payload() dto: GlobalDataIncomeDto) {
-    return await this.service.getData();
-}
-```
-
-**Обработка correlationId и correlationTimestamp:**
-
-Pipe автоматически извлекает поля `correlationId` и `correlationTimestamp` из входящего сообщения (если они присутствуют) и исключает их из валидации DTO. Это позволяет использовать эти поля для идемпотентности без необходимости добавлять их в DTO классы. Переменные переименовываются с префиксом `_` при деструктуризации, что явно указывает на их намеренное неиспользование.
-
-### FileValidationPipe
-
-Валидация загруженных файлов с проверкой размера, MIME типа и расширения.
-
-**Расположение:** `src/pipes/file-validation.pipe.ts`
-
-**Особенности:**
-- Валидирует одиночные файлы и массивы файлов
-- Проверяет размер файла (по умолчанию максимум 10MB)
-- Проверяет MIME тип файла
-- Проверяет расширение файла
-- Выбрасывает `BadRequestException` при ошибках валидации
-- Использует утилиту `validateFile` из `src/utils/file.utils.ts`
-
-**Использование:**
-```typescript
-import { FileValidationPipe } from "@packages/nest-common";
-
-@Post("upload")
-@UseInterceptors(FileInterceptor("file"))
-async uploadFile(
-    @UploadedFile(new FileValidationPipe({
-        maxSize: 5 * 1024 * 1024, // 5MB
-        allowedMimeTypes: ["image/jpeg", "image/png"],
-        allowedExtensions: ["jpg", "jpeg", "png"],
-    })) file: MulterFile,
-) {
-    return await this.service.saveFile(file);
-}
-```
-
-### QueryValidationPipe
-
-Валидация query параметров HTTP запросов с использованием `class-validator`.
-
-**Расположение:** `src/pipes/query-validation.pipe.ts`
-
-**Особенности:**
-- Автоматическое преобразование plain objects в DTO экземпляры через `plainToInstance`
-- Валидация только для query параметров (`metadata.type === "query"`)
-- Выбрасывает `BadRequestException` с детальными ошибками валидации
-- Поддерживает вложенные объекты и массивы
-
-**Использование:**
-```typescript
-import { QueryValidationPipe } from "@packages/nest-common";
-
-@Get()
-async getUsers(@Query(new QueryValidationPipe(PaginationDto)) query: PaginationDto) {
-    return await this.service.findAll(query);
-}
-```
-
-### HeaderValidationPipe
-
-Валидация заголовков HTTP запросов с использованием `class-validator`.
-
-**Расположение:** `src/pipes/header-validation.pipe.ts`
-
-**Особенности:**
-- Автоматическое преобразование plain objects в DTO экземпляры через `plainToInstance`
-- Валидация только для custom параметров (`metadata.type === "custom"`)
-- Выбрасывает `BadRequestException` с детальными ошибками валидации
-- Поддерживает вложенные объекты и массивы
-
-**Использование:**
-```typescript
-import { HeaderValidationPipe } from "@packages/nest-common";
-
-@Get("data")
-async getData(@Headers(new HeaderValidationPipe(ApiHeadersDto)) headers: ApiHeadersDto) {
-    return await this.service.getData(headers);
-}
-```
-
-### ResponseInterceptor
-
-Перехватчик для стандартизации формата HTTP ответов. Автоматически оборачивает ответы в стандартный формат `StandardResponse`.
-
-**Расположение:** `src/interceptors/response.interceptor.ts`
-
-**Особенности:**
-- Автоматически оборачивает ответы в формат `{ success: true, data: T, meta: {...} }`
-- Добавляет метаданные: timestamp, path, requestId
-- Если ответ уже в стандартном формате, возвращает как есть
-- Работает только с HTTP контекстом
-
-**Использование:**
-```typescript
-import { ResponseInterceptor } from "@packages/nest-common";
-
-@Controller("users")
-@UseInterceptors(ResponseInterceptor)
-export default class UsersController {
-    @Get()
-    async getUsers() {
-        // Ответ автоматически обернется в StandardResponse
-        return await this.service.findAll();
-    }
-}
-```
-
-### SerializeInterceptor
-
-Перехватчик для сериализации ответов с исключением чувствительных данных на основе DTO классов.
-
-**Расположение:** `src/interceptors/serialize.interceptor.ts`
-
-**Особенности:**
-- Использует декоратор `@Serialize()` для указания DTO класса
-- Автоматически исключает поля, не помеченные `@Expose()` в DTO
-- Поддерживает массивы данных
-- Работает с `class-transformer` и `excludeExtraneousValues: true`
-
-**Использование:**
-```typescript
-import { SerializeInterceptor, Serialize } from "@packages/nest-common";
-
-@Controller("users")
-@UseInterceptors(SerializeInterceptor)
-export default class UsersController {
-    @Get(":id")
-    @Serialize(UserResponseDto)
-    async getUser(@Param("id") id: string) {
-        // Поля, не помеченные @Expose() в UserResponseDto, будут исключены
-        return await this.service.findOne(id);
-    }
-}
-```
-
-### CompressionInterceptor
-
-Перехватчик для автоматического сжатия больших HTTP ответов с использованием gzip.
-
-**Расположение:** `src/interceptors/compression.interceptor.ts`
-
-**Особенности:**
-- Автоматически сжимает ответы больше заданного порога (по умолчанию 1024 байт)
-- Использует gzip сжатие
-- Проверяет эффективность сжатия (минимальный коэффициент сжатия 0.8)
-- Устанавливает заголовки `Content-Encoding: gzip` и `Content-Type: application/json`
-- Если сжатие неэффективно, возвращает исходные данные
-
-**Использование:**
-```typescript
-import { CompressionInterceptor } from "@packages/nest-common";
-
-@Controller("data")
-@UseInterceptors(new CompressionInterceptor(2048, 0.7)) // Порог 2KB, коэффициент 0.7
-export default class DataController {
-    @Get("large")
-    async getLargeData() {
-        // Большие ответы автоматически сжимаются
-        return await this.service.getLargeDataset();
-    }
-}
-```
-
-### RequestIdResponseInterceptor
-
-Перехватчик для добавления Request ID в заголовки HTTP ответов.
-
-**Расположение:** `src/interceptors/request-id-response.interceptor.ts`
-
-**Особенности:**
-- Извлекает Request ID из заголовков запроса (`x-request-id`) или `request.id`
-- Добавляет Request ID в заголовок ответа `X-Request-ID`
-- Работает только с HTTP контекстом
-- Использует утилиту `getRequestIdFromContext` из `src/utils/context.utils.ts`
-
-**Использование:**
-```typescript
-import { RequestIdResponseInterceptor } from "@packages/nest-common";
-
-@Controller("api")
-@UseInterceptors(RequestIdResponseInterceptor)
-export default class ApiController {
-    @Get("data")
-    async getData() {
-        // Request ID автоматически добавится в заголовки ответа
-        return await this.service.getData();
-    }
-}
-```
-
-### Guards
-
-Guards используются для контроля доступа к эндпоинтам на основе аутентификации, авторизации и других условий.
-
-#### JwtAuthGuard
-
-Guard для проверки JWT токена и аутентификации пользователя.
-
-**Расположение:** `src/guards/jwt-auth.guard.ts`
-
-**Особенности:**
-- Проверяет наличие пользователя в `request.user`
-- Уважает декоратор `@Public()` - пропускает публичные эндпоинты
-- Выбрасывает `UnauthorizedException` если пользователь не аутентифицирован
-
-**Использование:**
-```typescript
-import { JwtAuthGuard } from "@packages/nest-common";
-
-@Controller("users")
-@UseGuards(JwtAuthGuard)
-export default class UsersController {
-    @Get("profile")
-    async getProfile(@Request() req) {
-        // req.user доступен после прохождения JwtAuthGuard
-        return await this.service.getProfile(req.user);
-    }
-}
-```
-
-#### ApiKeyGuard
-
-Guard для проверки API ключа в заголовках запроса.
-
-**Расположение:** `src/guards/api-key.guard.ts`
-
-**Особенности:**
-- Проверяет наличие API ключа в заголовке (по умолчанию `x-api-key`)
-- Уважает декоратор `@Public()` - пропускает публичные эндпоинты
-- Работает только с эндпоинтами, помеченными декоратором `@ApiKey()`
-- Опционально проверяет ключ против списка валидных ключей
-- Выбрасывает `UnauthorizedException` при отсутствии или невалидном ключе
-
-**Использование:**
-```typescript
-import { ApiKeyGuard, ApiKey } from "@packages/nest-common";
-
-@Controller("api")
-export default class ApiController {
-    @Get("data")
-    @UseGuards(new ApiKeyGuard(undefined, "x-api-key", new Set(["key1", "key2"])))
-    @ApiKey()
-    async getData() {
-        return await this.service.getData();
-    }
-}
-```
-
-#### RolesGuard
-
-Guard для проверки ролей пользователя.
-
-**Расположение:** `src/guards/roles.guard.ts`
-
-**Особенности:**
-- Проверяет наличие требуемых ролей у пользователя
-- Использует декоратор `@Roles()` для указания требуемых ролей
-- Проверяет, что у пользователя есть хотя бы одна из указанных ролей
-- Выбрасывает `ForbiddenException` при недостаточных правах
-
-**Использование:**
-```typescript
-import { JwtAuthGuard, RolesGuard, Roles } from "@packages/nest-common";
-
-@Controller("admin")
-@UseGuards(JwtAuthGuard, RolesGuard)
-export default class AdminController {
-    @Get("users")
-    @Roles("admin", "moderator")
-    async getUsers() {
-        return await this.service.getUsers();
-    }
-}
-```
-
-#### PermissionsGuard
-
-Guard для проверки разрешений пользователя.
-
-**Расположение:** `src/guards/permissions.guard.ts`
-
-**Особенности:**
-- Проверяет наличие требуемых разрешений у пользователя
-- Использует декоратор `@Permissions()` для указания требуемых разрешений
-- Проверяет, что у пользователя есть ВСЕ указанные разрешения
-- Выбрасывает `ForbiddenException` при недостаточных правах
-
-**Использование:**
-```typescript
-import { JwtAuthGuard, PermissionsGuard, Permissions } from "@packages/nest-common";
-
-@Controller("users")
-@UseGuards(JwtAuthGuard, PermissionsGuard)
-export default class UsersController {
-    @Delete(":id")
-    @Permissions("users:delete", "users:write")
-    async deleteUser(@Param("id") id: string) {
-        return await this.service.delete(id);
-    }
-}
-```
-
-#### RateLimitGuard
-
-Guard для ограничения частоты запросов (Rate Limiting).
-
-**Расположение:** `src/guards/rate-limit.guard.ts`
-
-**Особенности:**
-- Ограничивает количество запросов за временное окно
-- По умолчанию: 100 запросов в минуту для аутентифицированных пользователей
-- Для публичных эндпоинтов применяется более строгий лимит (50% от базового)
-- Использует IP адрес и путь запроса для идентификации клиента
-- Поддерживает кастомный генератор ключей
-- Выбрасывает `HttpException` с кодом 429 (Too Many Requests) при превышении лимита
-- Автоматически очищает устаревшие записи
-
-**Использование:**
-```typescript
-import { RateLimitGuard } from "@packages/nest-common";
-
-@Controller("api")
-@UseGuards(new RateLimitGuard(undefined, 200, 60000)) // 200 запросов в минуту
-export default class ApiController {
-    @Get("data")
-    async getData() {
-        return await this.service.getData();
-    }
-}
-```
-
-#### WebSocketAuthGuard
-
-Guard для проверки аутентификации при подключении к WebSocket.
-
-**Расположение:** `src/guards/websocket-auth.guard.ts`
-
-**Особенности:**
-- Проверяет наличие токена в данных подключения или handshake
-- Поддерживает кастомный валидатор токена через коллбек `TokenValidator`
-- Выбрасывает `WsException` при отсутствии или невалидном токене
-
-**Использование:**
-```typescript
-import { WebSocketAuthGuard } from "@packages/nest-common";
-
-@WebSocketGateway()
-export default class ChatGateway {
-    constructor() {
-        this.authGuard = new WebSocketAuthGuard(async (token, context) => {
-            return await this.authService.validateToken(token);
-        });
-    }
-
-    @SubscribeMessage("message")
-    @UseGuards(this.authGuard)
-    async handleMessage(client: Socket, payload: unknown) {
-        return await this.service.sendMessage(payload);
-    }
-}
-```
-
-### Декораторы
-
-Декораторы используются для добавления метаданных к эндпоинтам и контроллерам.
-
-#### @Public()
-
-Декоратор для пометки эндпоинта как публичного (без аутентификации).
-
-**Расположение:** `src/decorators/public.decorator.ts`
-
-**Использование:**
-```typescript
-import { Public } from "@packages/nest-common";
-
-@Get("info")
-@Public()
-async getInfo() {
-    return { message: "Public information" };
-}
-```
-
-#### @Roles()
-
-Декоратор для указания ролей, необходимых для доступа к эндпоинту.
-
-**Расположение:** `src/decorators/roles.decorator.ts`
-
-**Использование:**
-```typescript
-import { Roles } from "@packages/nest-common";
-
-@Get("dashboard")
-@Roles("admin", "moderator")
-async getDashboard() {
-    return await this.service.getDashboard();
-}
-```
-
-#### @Permissions()
-
-Декоратор для указания разрешений, необходимых для доступа к эндпоинту.
-
-**Расположение:** `src/decorators/permissions.decorator.ts`
-
-**Использование:**
-```typescript
-import { Permissions } from "@packages/nest-common";
-
-@Delete(":id")
-@Permissions("users:delete", "users:write")
-async deleteUser(@Param("id") id: string) {
-    return await this.service.delete(id);
-}
-```
-
-#### @ApiKey()
-
-Декоратор для пометки эндпоинта как требующего API ключ.
-
-**Расположение:** `src/decorators/api-key.decorator.ts`
-
-**Использование:**
-```typescript
-import { ApiKey } from "@packages/nest-common";
-
-@Get("data")
-@ApiKey()
-async getData() {
-    return await this.service.getData();
-}
-```
-
-#### @Serialize()
-
-Декоратор для указания класса DTO для сериализации ответа.
-
-**Расположение:** `src/decorators/serialize.decorator.ts`
-
-**Использование:**
-```typescript
-import { Serialize } from "@packages/nest-common";
-
-@Get(":id")
-@Serialize(UserResponseDto)
-async getUser(@Param("id") id: string) {
-    return await this.service.findOne(id);
-}
-```
-
-### Утилиты для работы с контекстом
-
-Функции для извлечения данных из контекста выполнения запроса.
-
-**Расположение:** `src/utils/context.utils.ts`
-
-**Функции:**
-- `getUserFromContext(context: ExecutionContext): UserFromContext | undefined` - извлекает пользователя из контекста
-- `getIpFromContext(context: ExecutionContext): string` - извлекает IP адрес из контекста
-- `getUserAgentFromContext(context: ExecutionContext): string` - извлекает User-Agent из контекста
-- `getRequestIdFromContext(context: ExecutionContext): string` - извлекает Request ID из контекста
-
-**Использование:**
-```typescript
-import { getUserFromContext, getIpFromContext } from "@packages/nest-common";
-
-const user = getUserFromContext(context);
-const ip = getIpFromContext(context);
-```
-
-### createCorsOptions
-
-Функция для создания опций CORS для NestJS приложения.
-
-**Расположение:** `src/utils/cors.utils.ts`
-
-**Особенности:**
-- Настраивает CORS с разумными значениями по умолчанию
-- Поддерживает кастомные настройки origin, methods, headers и т.д.
-- По умолчанию разрешает все источники, основные HTTP методы и стандартные заголовки
-
-**Использование:**
-```typescript
-import { createCorsOptions } from "@packages/nest-common";
-
-app.enableCors(createCorsOptions({
-    origin: ["https://example.com"],
-    credentials: true,
-}));
-```
-
-### createCompressionOptions
-
-Функция для создания опций compression для NestJS приложения.
-
-**Расположение:** `src/utils/compression.utils.ts`
-
-**Особенности:**
-- Настраивает compression middleware с разумными значениями по умолчанию
-- По умолчанию сжимает только текстовые типы контента
-- Поддерживает кастомные настройки уровня сжатия, порога и фильтров
-
-**Использование:**
-```typescript
-import { createCompressionOptions } from "@packages/nest-common";
-
-app.use(compression(createCompressionOptions({
-    level: 9,
-    threshold: 512,
-})));
-```
-
-### createVersioningOptions
-
-Функция для создания опций версионирования API для NestJS приложения.
-
-**Расположение:** `src/utils/versioning.utils.ts`
-
-**Особенности:**
-- Поддерживает три стратегии версионирования: URI, Header, Media-Type
-- Настраивает версионирование с указанием типа и версии по умолчанию
-
-**Использование:**
-```typescript
-import { createVersioningOptions } from "@packages/nest-common";
-
-app.enableVersioning(createVersioningOptions({
-    type: "uri",
-    defaultVersion: "1",
-}));
-```
-
-### Утилиты для работы с файлами
-
-Функции для валидации и работы с файлами.
-
-**Расположение:** `src/utils/file.utils.ts`
-
-**Функции:**
-- `validateFile(file: MulterFile, options?: FileValidationOptions): FileValidationResult` - валидирует файл по заданным опциям
-- `getFileExtension(filename: string): string` - получает расширение файла из имени
-- `formatFileSize(bytes: number): string` - форматирует размер файла в читаемый формат
-
-**Использование:**
-```typescript
-import { validateFile, formatFileSize } from "@packages/nest-common";
-
-const result = validateFile(file, {
-    maxSize: 5 * 1024 * 1024,
-    allowedMimeTypes: ["image/jpeg", "image/png"],
-    allowedExtensions: ["jpg", "jpeg", "png"],
-});
-
-const size = formatFileSize(1024 * 1024); // "1 MB"
-```
-
-### CircuitBreakerService
-
-Сервис для реализации паттерна Circuit Breaker для защиты от каскадных сбоев.
-
-**Расположение:** `src/utils/circuit-breaker.ts`
-
-**Особенности:**
-- Реализует три состояния: CLOSED (нормальная работа), OPEN (разомкнут), HALF_OPEN (тестирование)
-- Автоматически открывает circuit при превышении порога ошибок
-- Автоматически закрывает circuit при успешных запросах в HALF_OPEN состоянии
-- Поддерживает настройку порогов ошибок и успешных запросов
-- Логирует переходы между состояниями
-
-**Использование:**
-```typescript
-import { CircuitBreakerService } from "@packages/nest-common";
-
-const circuitBreaker = new CircuitBreakerService(logger, {
-    failureThreshold: 5,
-    successThreshold: 2,
-    resetTimeout: 60000,
-});
-
-const result = await circuitBreaker.execute("external-api", async () => {
-    return await externalApi.call();
-});
-```
-
-### getServicePath
-
-Универсальная функция для определения пути в сервисе независимо от точки запуска и режима (dev/production).
-
-**Расположение:** `src/utils/get-service-path.ts`
-
-**Особенности:**
-- Работает одинаково в dev (src) и production (dist) режимах
-- Всегда использует пути относительно src/
-- Поддерживает три типа путей: locales, srcRoot, file
-- Автоматически находит корень сервиса по наличию папки src
-
-**Использование:**
-```typescript
-import { getServicePath } from "@packages/nest-common";
-
-const localesPath = getServicePath({
-    serviceName: "api-service",
-    dirname: __dirname,
-    pathType: "locales",
-    relativePath: "locales",
-});
-```
-
-### NestCommonError
-
-Базовый класс ошибок пакета nest-common для внутренних ошибок пакета.
-
-**Расположение:** `src/errors/nest-common.error.ts`
-
-**Наследование:** `Error`
-
-**Особенности:**
-- Используется для внутренних ошибок пакета
-- Сохраняет оригинальную ошибку для логирования
-- Корректно работает с `instanceof`
-
-**Использование:**
-```typescript
-import { NestCommonError } from "@packages/nest-common";
-
-throw new NestCommonError("Internal package error", originalError);
-```
-
-### validateEnv
-
-Функция валидации переменных окружения с использованием Joi.
-
-**Расположение:** `src/utils/env-validator.ts`
-
-**Особенности:**
-- Валидация обязательных переменных окружения
-- Выбрасывает `Error` с описанием отсутствующих ключей
-- Возвращает валидированный объект env
-- Использует `Joi.string().required()` для каждого обязательного ключа
-- Разрешает дополнительные ключи через `unknown(true)`
-- Использует `abortEarly: false` для получения всех ошибок валидации
-
-**Использование:**
-```typescript
-import { validateEnv } from "@packages/nest-common";
-
-const env = process.env;
-const requiredKeys = ["DATABASE_URL", "REDIS_URL", "RABBITMQ_URL"];
-
-// Выбрасывает Error если ключи отсутствуют
-const validatedEnv = validateEnv(env, requiredKeys);
-```
-
-### Типы
-
-**Расположение:** `src/types/`
-
-**http-response.ts:**
-- `ErrorResponse` - интерфейс для HTTP ответов с ошибками
-  - `statusCode: number` - HTTP статус код
-  - `timestamp: string` - ISO строка времени
-  - `path: string` - путь запроса
-  - `error: string` - название ошибки
-  - `message: string` - сообщение об ошибке
-  - `stack?: string` - опциональный stack trace (если доступен в исходной ошибке)
-- `StandardResponse<T>` - интерфейс стандартизированного ответа
-  - `success: boolean` - флаг успешности запроса
-  - `data: T` - данные ответа
-  - `meta?: { timestamp: string; path?: string; requestId?: string; [key: string]: unknown }` - метаданные ответа
-
-**rpc-types.ts:**
-- `RpcErrorType` - enum типов ошибок RPC
-  - Временные ошибки (retry): `RPC_TIMEOUT`, `SERVICE_UNAVAILABLE`, `RPC_SERVICE_UNAVAILABLE`
-  - Постоянные ошибки (DLX): `BAD_REQUEST`, `UNAUTHORIZED`, `FORBIDDEN`, `NOT_FOUND`, `VALIDATION_ERROR`, `RPC_VALIDATION_ERROR`
-
-**error-types.ts:**
-- `ErrorType` - enum типов ошибок для классификации в системе обработки исключений
-  - `HTTP_ERROR` - пользовательский HttpError
-  - `SOCKET_ERROR` - пользовательский SocketError
-  - `RPC_EXCEPTION` - RpcException от NestJS
-  - `HTTP_EXCEPTION` - HttpException от NestJS
-  - `ERROR` - стандартный Error
-  - `DESERIALIZED_RPC_ERROR` - десериализованный RpcError из RabbitMQ
-  - `NEST_RPC_EXCEPTION` - формат ошибки от NestJS ClientProxy
-  - `OBJECT` - объект с полем message
-  - `UNKNOWN` - неизвестный тип
-
-**context-types.ts:**
-- `ContextType` - enum типов контекстов выполнения в NestJS
-  - `HTTP` - HTTP контекст ("http")
-  - `RPC` - RPC контекст ("rpc")
-  - `WS` - WebSocket контекст ("ws")
-- `UserFromContext` - интерфейс пользователя из контекста запроса
-  - `id?: string | number` - ID пользователя
-  - `email?: string` - email пользователя
-  - `roles?: string[]` - роли пользователя
-  - `permissions?: string[]` - разрешения пользователя
-  - `[key: string]: unknown` - дополнительные поля
-- `ExtendedRequest` - расширенный тип Request с дополнительными свойствами
-  - `user?: UserFromContext` - пользователь из контекста
-  - `id?: string` - ID запроса
-
----
-
-## Best Practices
-
-### 1. Не используйте catch блоки в контроллерах
-
-```typescript
-// ❌ ПЛОХО
-@Get("global")
-async getGlobal() {
-    try {
-        return await this.service.getData();
-    } catch (error) {
-        // Обработка ошибок через try-catch не нужна - глобальный фильтр обработает
-    }
-}
-
-// ✅ ХОРОШО
-@Get("global")
-async getGlobal() {
-    // Глобальный фильтр все обработает
-    return await this.service.getData();
-}
-```
-
-### 2. Используйте catch блоки в сервисах только для логирования
-
-```typescript
-// ✅ ХОРОШО - дополнительное логирование
-async getData() {
-    try {
-        return await this.externalService.call();
-    } catch (error) {
-        this.logger.error(`Дополнительное логирование: ${error}`);
-        // Пробрасываем дальше - фильтр преобразует
-        throw error;
-    }
-}
-```
-
-### 3. Не преобразуйте ошибки вручную в контроллерах
-
-```typescript
-// ❌ ПЛОХО
-@Get("global")
-async getGlobal() {
-    try {
-        return await this.service.getData();
-    } catch (error) {
-        const httpError = HttpError.fromUnknown(error);
-        throw httpError;
-    }
-}
-
-// ✅ ХОРОШО - фильтр сделает это автоматически
-@Get("global")
-async getGlobal() {
-    return await this.service.getData();
-}
-```
-
-### 4. Используйте правильный тип ошибки для контекста
-
-```typescript
-// HTTP контекст → HttpError (автоматически через UnifiedExceptionFilter)
-// RPC контекст → RpcError (автоматически через UnifiedExceptionFilter)
-// Socket контекст → SocketError (вручную в SocketGateway.publish())
-```
+## Важные замечания
+
+1. **Порядок регистрации**: UnifiedExceptionFilter и UnifiedInterceptor должны быть зарегистрированы глобально в `main.ts`
+2. **Без catch блоков в контроллерах**: Контроллеры не должны иметь try-catch блоков - глобальный фильтр все обработает
+3. **Автоматическое преобразование**: Ошибки автоматически преобразуются между контекстами с сохранением типа и статус-кода
+4. **RpcValidationPipe**: Автоматически извлекает `correlationId` и `correlationTimestamp` из сообщения перед валидацией
+5. **Guards**: Используются с соответствующими декораторами (`@Roles()`, `@Permissions()`, `@ApiKey()`)
+6. **JsonRpcExceptionFilter**: Используется для обработки JSON-RPC 2.0 запросов отдельно от UnifiedExceptionFilter
 
 ## Тестирование
 
-Пакет имеет высокое покрытие тестами (>95% для веток, 100% для statements и функций).
+Пакет имеет 100% покрытие тестами. Все компоненты протестированы через Jest.
 
-**Покрытие тестами:**
-- Statements: 100%
-- Branches: 95.45%
-- Functions: 100%
-- Lines: 100%
+## Зависимости
 
-**Тестовые сценарии:**
-- Все классы ошибок (HttpError, RpcError, SocketError, NestCommonError, JsonRpcException)
-- Глобальные фильтры (UnifiedExceptionFilter, HttpExceptionFilter, RpcExceptionFilter, WebSocketExceptionHandler, JsonRpcExceptionFilter)
-- Перехватчики (UnifiedInterceptor, HttpLoggingInterceptor, RpcLoggingInterceptor, WebSocketLoggingInterceptor, ResponseInterceptor, SerializeInterceptor, CompressionInterceptor, RequestIdResponseInterceptor)
-- Пайпы валидации (HttpValidationPipe, RpcValidationPipe, FileValidationPipe, QueryValidationPipe, HeaderValidationPipe, JsonRpcValidationPipe)
-- Guards (JwtAuthGuard, ApiKeyGuard, RolesGuard, PermissionsGuard, RateLimitGuard, WebSocketAuthGuard)
-- Декораторы (Public, Roles, Permissions, ApiKey, Serialize)
-- Базовые классы (BaseController)
-- Утилиты (validateEnv, getUserFromContext, getIpFromContext, getUserAgentFromContext, getRequestIdFromContext, createCorsOptions, createCompressionOptions, createVersioningOptions, validateFile, getFileExtension, formatFileSize, CircuitBreakerService, getServicePath)
-- Преобразование ошибок между контекстами
-- Обработка граничных случаев и различных типов ошибок
-- Проверка сохранения оригинального формата сообщений (массивы остаются массивами в getResponse)
-- Интеграция AxiosError с RpcError и HttpError
-- Логирование HTTP, RPC и WebSocket запросов с метриками времени выполнения
-- Валидация файлов, query параметров и заголовков
-- Авторизация и аутентификация через guards
-- Rate limiting и circuit breaker паттерны
-- JSON-RPC 2.0 валидация и обработка ошибок
-
-## Экспорты (index.ts)
-
-Пакет экспортирует следующие компоненты:
-
-```typescript
-// Pipes
-export { default as HttpValidationPipe } from "src/pipes/http-validation.pipe";
-export { default as RpcValidationPipe } from "src/pipes/rpc-validation.pipe";
-export { default as FileValidationPipe } from "src/pipes/file-validation.pipe";
-export { default as QueryValidationPipe } from "src/pipes/query-validation.pipe";
-export { default as HeaderValidationPipe } from "src/pipes/header-validation.pipe";
-export { default as JsonRpcValidationPipe } from "src/pipes/json-rpc-validation.pipe";
-
-// Filters
-export { default as UnifiedExceptionFilter } from "src/filters/unified-exception.filter";
-export { default as JsonRpcExceptionFilter } from "src/filters/json-rpc-exception.filter";
-
-// Interceptors
-export { default as UnifiedInterceptor } from "src/interceptors/unified.interceptor";
-export { default as ResponseInterceptor } from "src/interceptors/response.interceptor";
-export { default as SerializeInterceptor } from "src/interceptors/serialize.interceptor";
-export { default as CompressionInterceptor } from "src/interceptors/compression.interceptor";
-export { default as RequestIdResponseInterceptor } from "src/interceptors/request-id-response.interceptor";
-
-// Errors
-export { default as HttpError } from "src/errors/http.error";
-export { default as RpcError } from "src/errors/rpc.error";
-export { default as SocketError } from "src/errors/socket.error";
-export { default as NestCommonError } from "src/errors/nest-common.error";
-export { default as JsonRpcException } from "src/errors/json-rpc.error";
-
-// Types
-export { RpcErrorType } from "src/types/rpc-types";
-export type { StandardResponse } from "src/types/http-response";
-export {
-	JsonRpcErrorCode,
-	JSON_RPC_ERROR_MESSAGES,
-	JSON_RPC_ERROR_NAMES,
-	mapHttpStatusToJsonRpcErrorCode,
-	getErrorStatus,
-} from "src/types/json-rpc-error-codes";
-export type { JsonRpcRequest, JsonRpcResponse } from "src/types/json-rpc-types";
-
-// Base classes
-export { default as BaseController } from "src/base/base.controller";
-
-// Guards
-export { default as JwtAuthGuard } from "src/guards/jwt-auth.guard";
-export { default as ApiKeyGuard } from "src/guards/api-key.guard";
-export { default as RolesGuard } from "src/guards/roles.guard";
-export { default as PermissionsGuard } from "src/guards/permissions.guard";
-export { default as RateLimitGuard } from "src/guards/rate-limit.guard";
-export { default as WebSocketAuthGuard, type TokenValidator } from "src/guards/websocket-auth.guard";
-
-// Decorators
-export { Public, IS_PUBLIC_KEY } from "src/decorators/public.decorator";
-export { Roles, ROLES_KEY } from "src/decorators/roles.decorator";
-export { Permissions, PERMISSIONS_KEY } from "src/decorators/permissions.decorator";
-export { ApiKey, API_KEY_KEY } from "src/decorators/api-key.decorator";
-export { Serialize, SERIALIZE_KEY } from "src/decorators/serialize.decorator";
-
-// Context utils
-export {
-    getUserFromContext,
-    getIpFromContext,
-    getUserAgentFromContext,
-    getRequestIdFromContext,
-} from "src/utils/context.utils";
-export type { UserFromContext } from "src/types/context-types";
-
-// CORS utils
-export { default as createCorsOptions } from "src/utils/cors.utils";
-export type { CorsOptionsConfig } from "src/types/cors-types";
-
-// Compression utils
-export { default as createCompressionOptions } from "src/utils/compression.utils";
-export type { CompressionOptionsConfig } from "src/types/compression-types";
-
-// Versioning utils
-export { default as createVersioningOptions } from "src/utils/versioning.utils";
-export type {
-    VersioningOptionsConfig,
-    VersioningStrategy,
-} from "src/types/versioning-types";
-
-// File utils
-export {
-    validateFile,
-    getFileExtension,
-    formatFileSize,
-} from "src/utils/file.utils";
-export type {
-    FileValidationOptions,
-    FileValidationResult,
-} from "src/types/file-validation-types";
-export type { MulterFile } from "src/types/file-types";
-
-// Circuit Breaker
-export { default as CircuitBreakerService } from "src/utils/circuit-breaker";
-export {
-    CircuitBreakerState,
-    type CircuitBreakerOptions,
-} from "src/types/circuit-breaker-types";
-
-// Service path utils
-export { default as getServicePath } from "src/utils/get-service-path";
-export type {
-    GetServicePathOptions,
-    ServicePathType,
-} from "src/types/get-service-path-types";
-
-// Env validator
-export { default as validateEnv } from "src/utils/env-validator";
-```
-
-**Важно:** 
-- Внутренние обработчики (`HttpExceptionFilter`, `RpcExceptionFilter`, `HttpLoggingInterceptor`, `RpcLoggingInterceptor`, `WebSocketLoggingInterceptor`) не экспортируются напрямую, они используются внутри `UnifiedExceptionFilter` и `UnifiedInterceptor`.
-- Enum'ы `ErrorType` и `ContextType` не экспортируются публично, они используются только внутри пакета для классификации ошибок и контекстов.
-
-## Важные детали реализации
-
-### Использование enum'ов для типизации
-
-Пакет использует enum'ы для строгой типизации:
-- `ErrorType` - для классификации типов ошибок в `HttpError.getErrorType()`
-- `ContextType` - для определения типа контекста в `UnifiedExceptionFilter` и `UnifiedInterceptor`
-
-Все строковые литералы заменены на значения enum для предотвращения опечаток и улучшения поддержки кода.
-
-### Методы классов ошибок
-
-**HttpError:**
-- `getStatus(): number` - возвращает HTTP статус-код
-- `getResponse(): { error: string; message: string }` - возвращает структурированный ответ
-
-**SocketError:**
-- `getStatus(): number` - возвращает HTTP статус-код (INTERNAL_SERVER_ERROR)
-- `getResponse(): { error: string; message: string }` - возвращает структурированный ответ
-- `getMessage(): string` - возвращает строковое сообщение об ошибке
-
-**RpcError:**
-- `getError(): { message: string; errorType: RpcErrorType; statusCode: number }` - возвращает структурированную ошибку для сериализации
-- `isTransient(): boolean` - проверяет, является ли ошибка временной
-
-### Git Hooks (Husky)
-
-Пакет использует Husky для автоматической проверки кода:
-- **pre-commit**: Автоматически исправляет линтер и форматирование перед коммитом
-- **pre-push**: Запускает тесты с проверкой покрытия перед push
-
-## Совместимость
-
-- **Node.js**: >=22.11.0
-- **pnpm**: >=10.18.0
-- **@nestjs/common**: ^11.1.6
-- **@nestjs/microservices**: ^11.1.3
-- **rxjs**: ^7.8.2
-- **@makebelieve21213-packages/logger**: 1.0.5
+- `@nestjs/common` - NestJS core
+- `@nestjs/microservices` - NestJS microservices (для RpcException)
+- `@nestjs/websockets` - NestJS WebSocket (для Socket.io)
+- `@makebelieve21213-packages/logger` - Логирование
+- `class-validator` - Валидация DTO
+- `class-transformer` - Трансформация объектов
+- `joi` - Валидация переменных окружения
+- `rxjs` - Reactive extensions

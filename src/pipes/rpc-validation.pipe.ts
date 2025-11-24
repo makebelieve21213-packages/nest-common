@@ -35,9 +35,7 @@ export default class RpcValidationPipe<T extends object> implements PipeTransfor
 		});
 
 		if (errors.length) {
-			const messages = errors
-				.map((err) => Object.values(err.constraints || {}).join("; "))
-				.join("; ");
+			const messages = errors.map((err) => Object.values(err.constraints || {}).join("; ")).join("; ");
 			throw new RpcException(`Validation failed: ${messages}`);
 		}
 

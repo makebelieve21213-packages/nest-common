@@ -1,8 +1,5 @@
 import type { MulterFile } from "src/types/file-types";
-import type {
-	FileValidationOptions,
-	FileValidationResult,
-} from "src/types/file-validation-types";
+import type { FileValidationOptions, FileValidationResult } from "src/types/file-validation-types";
 
 // Валидирует файл по заданным опциям
 export function validateFile(

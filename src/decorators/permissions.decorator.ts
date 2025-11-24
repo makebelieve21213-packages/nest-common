@@ -4,5 +4,4 @@ import { SetMetadata } from "@nestjs/common";
 export const PERMISSIONS_KEY = "permissions";
 
 // Декоратор для указания разрешений, необходимых для доступа к эндпоинту
-export const Permissions = (...permissions: string[]) =>
-	SetMetadata(PERMISSIONS_KEY, permissions);
+export const Permissions = (...permissions: string[]) => SetMetadata(PERMISSIONS_KEY, permissions);

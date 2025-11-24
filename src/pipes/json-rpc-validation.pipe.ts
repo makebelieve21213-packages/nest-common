@@ -22,11 +22,7 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 
 		// Игнорируем объекты, которые явно не являются JSON-RPC запросами
 		// (например, метаданные NestJS: args, constructorRef, handler, contextType)
-		if (
-			keys.includes("constructorRef") ||
-			keys.includes("handler") ||
-			keys.includes("contextType")
-		) {
+		if (keys.includes("constructorRef") || keys.includes("handler") || keys.includes("contextType")) {
 			// Это не JSON-RPC запрос, возвращаем как есть (для других параметров метода)
 			return value as JsonRpcRequest;
 		}
@@ -52,8 +48,7 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		// Проверка версии протокола
 		if (request.jsonrpc !== "2.0") {
 			const id =
-				request.id !== undefined &&
-				(typeof request.id === "string" || typeof request.id === "number")
+				request.id !== undefined && (typeof request.id === "string" || typeof request.id === "number")
 					? request.id
 					: null;
 			throw new JsonRpcException(
@@ -66,8 +61,7 @@ export default class JsonRpcValidationPipe implements PipeTransform {
 		// Проверка наличия метода
 		if (!request.method || typeof request.method !== "string") {
 			const id =
-				request.id !== undefined &&
-				(typeof request.id === "string" || typeof request.id === "number")
+				request.id !== undefined && (typeof request.id === "string" || typeof request.id === "number")
 					? request.id
 					: null;
 			throw new JsonRpcException(

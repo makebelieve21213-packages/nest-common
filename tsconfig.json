@@ -38,6 +38,6 @@
 		},
 		"types": ["jest", "node"]
 	},
-	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules", "dist", "build", "coverage", "eslint.config.ts"]
+	"include": ["src/**/*.ts", "**/*.d.ts"],
+	"exclude": ["node_modules", "dist", "coverage"]
 }

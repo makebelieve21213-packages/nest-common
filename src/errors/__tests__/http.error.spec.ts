@@ -146,11 +146,7 @@ describe("HttpError", () => {
 		});
 
 		it("должен преобразовать RpcError в HttpError с правильным статусом", () => {
-			const rpcError = new RpcError(
-				"Bad request",
-				RpcErrorType.BAD_REQUEST,
-				HttpStatus.BAD_REQUEST
-			);
+			const rpcError = new RpcError("Bad request", RpcErrorType.BAD_REQUEST, HttpStatus.BAD_REQUEST);
 			const error = HttpError.fromUnknown(rpcError);
 
 			expect(error).toBeInstanceOf(HttpError);

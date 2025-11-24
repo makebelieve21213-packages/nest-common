@@ -217,9 +217,7 @@ describe("UnifiedInterceptor", () => {
 			result.subscribe({
 				next: (value) => {
 					expect(value).toEqual({ result: "success" });
-					expect(loggerService.log).toHaveBeenCalledWith(
-						expect.stringContaining("[WS] Incoming event")
-					);
+					expect(loggerService.log).toHaveBeenCalledWith(expect.stringContaining("[WS] Incoming event"));
 					done();
 				},
 			});
@@ -312,9 +310,7 @@ describe("UnifiedInterceptor", () => {
 			result.subscribe({
 				error: (err) => {
 					expect(err).toBe(error);
-					expect(loggerService.error).toHaveBeenCalledWith(
-						expect.stringContaining("[WS] Event failed")
-					);
+					expect(loggerService.error).toHaveBeenCalledWith(expect.stringContaining("[WS] Event failed"));
 					done();
 				},
 			});

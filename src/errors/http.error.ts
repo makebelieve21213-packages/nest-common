@@ -130,9 +130,7 @@ export default class HttpError extends HttpException {
 
 				message = String(messageValue ?? errorData);
 				statusCode =
-					error instanceof RpcError
-						? (error as RpcError).statusCode
-						: HttpStatus.INTERNAL_SERVER_ERROR;
+					error instanceof RpcError ? (error as RpcError).statusCode : HttpStatus.INTERNAL_SERVER_ERROR;
 
 				break;
 			}
@@ -171,9 +169,8 @@ export default class HttpError extends HttpException {
 				const httpException = error as HttpException;
 				const res = httpException.getResponse();
 				const messageValue =
-					(typeof res === "object" && res !== null
-						? (res as Record<string, unknown>).message
-						: null) ?? res;
+					(typeof res === "object" && res !== null ? (res as Record<string, unknown>).message : null) ??
+					res;
 
 				message = Array.isArray(messageValue) ? messageValue.join("; ") : String(messageValue);
 				statusCode = httpException.getStatus();

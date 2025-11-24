@@ -23,9 +23,7 @@ export default class WebSocketLoggingInterceptor {
 		this.loggerService.setContext(WebSocketLoggingInterceptor.name);
 
 		// Логируем входящее событие
-		this.loggerService.log(
-			`[WS] Incoming event [pattern: ${pattern}] from client [${clientId}]`
-		);
+		this.loggerService.log(`[WS] Incoming event [pattern: ${pattern}] from client [${clientId}]`);
 
 		// Перехватываем выполнение и логируем результат
 		return next.handle().pipe(

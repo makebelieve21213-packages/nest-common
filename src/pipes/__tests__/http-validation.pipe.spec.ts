@@ -52,25 +52,19 @@ describe("HttpValidationPipe", () => {
 	it("должен выбросить BadRequestException при невалидном age", async () => {
 		const input = { name: "John", age: "invalid" };
 
-		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(
-			BadRequestException
-		);
+		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(BadRequestException);
 	});
 
 	it("должен выбросить BadRequestException при отсутствующих полях", async () => {
 		const input = {};
 
-		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(
-			BadRequestException
-		);
+		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(BadRequestException);
 	});
 
 	it("должен выбросить BadRequestException при дополнительных полях", async () => {
 		const input = { name: "John", age: 30, extra: "field" };
 
-		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(
-			BadRequestException
-		);
+		await expect(pipe.transform(input as unknown as TestDto)).rejects.toThrow(BadRequestException);
 	});
 
 	it("должен включить все ошибки валидации в сообщение", async () => {

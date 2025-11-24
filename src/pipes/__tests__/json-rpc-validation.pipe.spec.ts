@@ -148,9 +148,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(request);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 				const rpcData = (error as JsonRpcException).getRpcData();
 				expect(rpcData).toEqual({ requestId: 1 });
 			}
@@ -167,9 +165,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(request);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 			}
 		});
 
@@ -185,9 +181,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(request);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 			}
 		});
 
@@ -203,9 +197,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(request);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 			}
 		});
 
@@ -222,9 +214,7 @@ describe("JsonRpcValidationPipe", () => {
 				pipe.transform(request);
 			} catch (error) {
 				expect(error).toBeInstanceOf(JsonRpcException);
-				expect((error as JsonRpcException).getRpcErrorCode()).toBe(
-					JsonRpcErrorCode.INVALID_REQUEST
-				);
+				expect((error as JsonRpcException).getRpcErrorCode()).toBe(JsonRpcErrorCode.INVALID_REQUEST);
 			}
 		});
 

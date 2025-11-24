@@ -48,11 +48,9 @@ describe("JsonRpcExceptionFilter", () => {
 		it("должен обработать JsonRpcException и вернуть правильный JSON-RPC ответ", () => {
 			const requestId = 123;
 			mockRequest.body = { id: requestId };
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.INVALID_REQUEST,
-				"Invalid request",
-				{ details: "test" }
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.INVALID_REQUEST, "Invalid request", {
+				details: "test",
+			});
 
 			filter.catch(exception, mockArgumentsHost);
 
@@ -103,10 +101,7 @@ describe("JsonRpcExceptionFilter", () => {
 		});
 
 		it("должен извлечь сообщение из response.error.message", () => {
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.METHOD_NOT_FOUND,
-				"Method not found"
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.METHOD_NOT_FOUND, "Method not found");
 
 			filter.catch(exception, mockArgumentsHost);
 

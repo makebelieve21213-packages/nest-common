@@ -129,9 +129,7 @@ describe("WebSocketLoggingInterceptor", () => {
 
 			result.subscribe({
 				next: () => {
-					expect(loggerService.log).toHaveBeenCalledWith(
-						expect.stringContaining("client [unknown]")
-					);
+					expect(loggerService.log).toHaveBeenCalledWith(expect.stringContaining("client [unknown]"));
 					done();
 				},
 			});

@@ -28,9 +28,7 @@ export default class HttpLoggingInterceptor {
 		this.loggerService.setContext(HttpLoggingInterceptor.name);
 
 		// Логируем входящий запрос
-		this.loggerService.log(
-			`[HTTP] Incoming request [${method} ${url}] from ${ip} (${userAgent})`
-		);
+		this.loggerService.log(`[HTTP] Incoming request [${method} ${url}] from ${ip} (${userAgent})`);
 
 		// Перехватываем выполнение и логируем результат
 		return next.handle().pipe(

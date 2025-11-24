@@ -97,9 +97,7 @@ describe("HttpLoggingInterceptor", () => {
 					// Проверяем, что используется статус код из ошибки (BAD_REQUEST),
 					// а не из response (OK)
 					expect(loggerService.error).toHaveBeenCalledWith(
-						expect.stringContaining(
-							`[HTTP] Request failed [GET /api/test] ${HttpStatus.BAD_REQUEST}`
-						)
+						expect.stringContaining(`[HTTP] Request failed [GET /api/test] ${HttpStatus.BAD_REQUEST}`)
 					);
 					done();
 				},

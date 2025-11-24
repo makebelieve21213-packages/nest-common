@@ -6,9 +6,7 @@ import type { StandardResponse } from "src/types/http-response";
 
 // Interceptor для стандартизации формата HTTP ответов
 @Injectable()
-export default class ResponseInterceptor<T>
-	implements NestInterceptor<T, StandardResponse<T>>
-{
+export default class ResponseInterceptor<T> implements NestInterceptor<T, StandardResponse<T>> {
 	constructor() {}
 
 	intercept(context: ExecutionContext, next: CallHandler): Observable<StandardResponse<T>> {

@@ -35,9 +35,7 @@ describe("CircuitBreakerService", () => {
 		}
 
 		// Следующий запрос должен быть отклонен из-за открытого circuit breaker
-		await expect(service.execute("test-key", fn)).rejects.toThrow(
-			"Circuit breaker test-key is OPEN"
-		);
+		await expect(service.execute("test-key", fn)).rejects.toThrow("Circuit breaker test-key is OPEN");
 	});
 
 	it("should transition to HALF_OPEN after reset timeout", async () => {
@@ -109,9 +107,7 @@ describe("CircuitBreakerService", () => {
 
 		// Открываем circuit breaker
 		for (let i = 0; i < 5; i++) {
-			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow(
-				"Test error"
-			);
+			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow("Test error");
 		}
 
 		// Проверяем, что используется дефолтный resetTimeout (60000)
@@ -161,9 +157,7 @@ describe("CircuitBreakerService", () => {
 
 		// Открываем circuit breaker
 		for (let i = 0; i < 3; i++) {
-			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow(
-				"Test error"
-			);
+			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow("Test error");
 		}
 
 		// Ждем истечения reset timeout
@@ -184,9 +178,7 @@ describe("CircuitBreakerService", () => {
 
 		// Выполняем запросы до дефолтного порога ошибок (5)
 		for (let i = 0; i < 5; i++) {
-			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow(
-				"Test error"
-			);
+			await expect(serviceWithDefaults.execute("test-key", errorFn)).rejects.toThrow("Test error");
 		}
 
 		// Проверяем, что circuit breaker открыт

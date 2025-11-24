@@ -97,9 +97,7 @@ describe("WebSocketExceptionHandler", () => {
 		handler.handleException(error, mockArgumentsHost);
 
 		expect(mockLoggerService.error).toHaveBeenCalledTimes(2);
-		expect(mockLoggerService.error).toHaveBeenCalledWith(
-			expect.stringContaining("Error with stack")
-		);
+		expect(mockLoggerService.error).toHaveBeenCalledWith(expect.stringContaining("Error with stack"));
 		expect(mockLoggerService.error).toHaveBeenCalledWith(
 			"Stack trace: Error: Error with stack\n    at test.js:1:1"
 		);

@@ -1,9 +1,4 @@
-import {
-	ArgumentMetadata,
-	Injectable,
-	PipeTransform,
-	BadRequestException,
-} from "@nestjs/common";
+import { ArgumentMetadata, Injectable, PipeTransform, BadRequestException } from "@nestjs/common";
 import { validateFile } from "src/utils/file.utils";
 
 import type { MulterFile } from "src/types/file-types";

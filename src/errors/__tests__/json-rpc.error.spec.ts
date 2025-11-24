@@ -39,11 +39,7 @@ describe("JsonRpcException", () => {
 
 		it("должен создать исключение с данными", () => {
 			const data = { requestId: "123", details: "Some details" };
-			const exception = new JsonRpcException(
-				JsonRpcErrorCode.INVALID_PARAMS,
-				"Invalid params",
-				data
-			);
+			const exception = new JsonRpcException(JsonRpcErrorCode.INVALID_PARAMS, "Invalid params", data);
 
 			expect(exception.getRpcData()).toEqual(data);
 			const response = exception.getResponse();
@@ -109,10 +105,7 @@ describe("JsonRpcException", () => {
 		});
 
 		it("должен использовать message из exception если response не содержит message", () => {
-			const httpException = new HttpException(
-				{ error: "Error" },
-				HttpStatus.INTERNAL_SERVER_ERROR
-			);
+			const httpException = new HttpException({ error: "Error" }, HttpStatus.INTERNAL_SERVER_ERROR);
 			httpException.message = "Exception message";
 			const rpcException = JsonRpcException.fromHttpException(httpException);
 

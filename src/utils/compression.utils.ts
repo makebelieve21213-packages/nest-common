@@ -1,8 +1,5 @@
 import type { Request, Response } from "express";
-import type {
-	CompressionOptions,
-	CompressionOptionsConfig,
-} from "src/types/compression-types";
+import type { CompressionOptions, CompressionOptionsConfig } from "src/types/compression-types";
 
 // Создает опции compression для NestJS приложения
 export default function createCompressionOptions(

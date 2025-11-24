@@ -20,9 +20,7 @@ export default class HttpValidationPipe<T extends object> implements PipeTransfo
 		});
 
 		if (errors.length) {
-			const messages = errors
-				.map((err) => Object.values(err.constraints || {}).join("; "))
-				.join("; ");
+			const messages = errors.map((err) => Object.values(err.constraints || {}).join("; ")).join("; ");
 			throw new BadRequestException(`Validation failed: ${messages}`);
 		}
 

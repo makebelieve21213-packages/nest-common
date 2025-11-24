@@ -101,8 +101,6 @@ describe("HeaderValidationPipe", () => {
 			data: "",
 		};
 
-		await expect(pipeWithNested.transform(headers, metadata)).rejects.toThrow(
-			BadRequestException
-		);
+		await expect(pipeWithNested.transform(headers, metadata)).rejects.toThrow(BadRequestException);
 	});
 });

@@ -66,18 +66,12 @@ export { default as createVersioningOptions } from "src/utils/versioning.utils";
 export type { VersioningOptionsConfig, VersioningStrategy } from "src/types/versioning-types";
 
 export { validateFile, getFileExtension, formatFileSize } from "src/utils/file.utils";
-export type {
-	FileValidationOptions,
-	FileValidationResult,
-} from "src/types/file-validation-types";
+export type { FileValidationOptions, FileValidationResult } from "src/types/file-validation-types";
 
 export type { MulterFile } from "src/types/file-types";
 
 export { default as CircuitBreakerService } from "src/utils/circuit-breaker";
-export {
-	CircuitBreakerState,
-	type CircuitBreakerOptions,
-} from "src/types/circuit-breaker-types";
+export { CircuitBreakerState, type CircuitBreakerOptions } from "src/types/circuit-breaker-types";
 
 export { default as validateEnv } from "src/utils/env-validator";
 

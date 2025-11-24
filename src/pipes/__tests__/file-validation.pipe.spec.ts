@@ -7,11 +7,7 @@ import type { MulterFile } from "src/types/file-types";
 describe("FileValidationPipe", () => {
 	let pipe: FileValidationPipe;
 
-	const createMockFile = (
-		size: number,
-		mimetype: string,
-		originalname: string
-	): MulterFile => ({
+	const createMockFile = (size: number, mimetype: string, originalname: string): MulterFile => ({
 		fieldname: "file",
 		originalname,
 		encoding: "7bit",
@@ -77,8 +73,6 @@ describe("FileValidationPipe", () => {
 		expect(() => pipe.transform(null as unknown as MulterFile, metadata)).toThrow(
 			BadRequestException
 		);
-		expect(() => pipe.transform(null as unknown as MulterFile, metadata)).toThrow(
-			"No file provided"
-		);
+		expect(() => pipe.transform(null as unknown as MulterFile, metadata)).toThrow("No file provided");
 	});
 });
