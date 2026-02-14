@@ -5,6 +5,18 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.4] - 2026-02-14
+
+### Добавлено
+- Декоратор `@User()` для получения `req.user` в хендлерах контроллера с поддержкой generic-типа (`@User<MyUserType>()`)
+
+### Изменено
+- Prettier: команды `format` и `format:fix` теперь проверяют/форматируют весь проект (`.` вместо `src/**/*.ts`)
+- .prettierignore: добавлены исключения для `*.json` и `*.config.ts`
+
+### Удалено
+- Dependabot (`.github/dependabot.yml`)
+
 ## [1.1.3] - 2025-11-24
 
 ### Изменено

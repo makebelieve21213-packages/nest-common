@@ -84,15 +84,12 @@ export default [
 		],
 	},
 	// Основные файлы пакета (исключая тесты)
-    {
-        files: ["src/**/*.ts"],
-		ignores: [
-			"src/**/*.spec.ts",
-			"src/**/__tests__/**/*.ts",
-		],
-        languageOptions: {
+	{
+		files: ["src/**/*.ts"],
+		ignores: ["src/**/*.spec.ts", "src/**/__tests__/**/*.ts"],
+		languageOptions: {
 			parser: parser,
-            parserOptions: {
+			parserOptions: {
 				ecmaVersion: "latest",
 				sourceType: "module",
 				project: ["./tsconfig.json"],
@@ -114,10 +111,7 @@ export default [
 	},
 	// Тестовые файлы
 	{
-		files: [
-			"src/**/*.spec.ts",
-			"src/**/__tests__/**/*.ts",
-		],
+		files: ["src/**/*.spec.ts", "src/**/__tests__/**/*.ts"],
 		languageOptions: {
 			parser: parser,
 			parserOptions: {

@@ -21,7 +21,7 @@
 - ✅ **Валидация** - готовые пайпы для валидации DTO, файлов, query параметров и заголовков
 - ✅ **Логирование** - автоматическое логирование всех HTTP, RPC и WebSocket запросов
 - ✅ **Guards** - готовые guards для аутентификации, авторизации и rate limiting
-- ✅ **Декораторы** - удобные декораторы для метаданных (@Public, @Roles, @Permissions, @ApiKey, @Serialize)
+- ✅ **Декораторы** - удобные декораторы для метаданных (@Public, @Roles, @Permissions, @ApiKey, @Serialize, @User)
 - ✅ **Утилиты** - функции для работы с контекстом, файлами, CORS, compression, versioning
 - ✅ **100% покрытие тестами** - надежность и качество кода
 - ✅ **TypeScript типизация** - полная типобезопасность
@@ -264,7 +264,16 @@ app.useGlobalInterceptors(new UnifiedInterceptor(logger));
 
 **ApiKeyGuard** - проверка API ключа (работает с декоратором `@ApiKey()`)
 ```typescript
-@UseGuards(new ApiKeyGuard(undefined, "x-api-key", new Set(["key1", "key2"])))
+// Регистрация в модуле (Reflector из @nestjs/core)
+{
+  provide: ApiKeyGuard,
+  useFactory: (reflector: Reflector) =>
+    new ApiKeyGuard(reflector, "x-api-key", new Set(["key1", "key2"])),
+  inject: [Reflector],
+}
+
+// В контроллере
+@UseGuards(ApiKeyGuard)
 @ApiKey()
 ```
 
@@ -282,7 +291,16 @@ app.useGlobalInterceptors(new UnifiedInterceptor(logger));
 
 **RateLimitGuard** - ограничение частоты запросов
 ```typescript
-@UseGuards(new RateLimitGuard(undefined, 200, 60000)) // 200 запросов в минуту
+// Регистрация в модуле (Reflector из @nestjs/core)
+{
+  provide: RateLimitGuard,
+  useFactory: (reflector: Reflector) =>
+    new RateLimitGuard(reflector, 200, 60000), // 200 запросов в минуту
+  inject: [Reflector],
+}
+
+// В контроллере
+@UseGuards(RateLimitGuard)
 ```
 
 **WebSocketAuthGuard** - проверка аутентификации WebSocket
@@ -299,6 +317,22 @@ app.useGlobalInterceptors(new UnifiedInterceptor(logger));
 - `@Permissions(...)` - указание требуемых разрешений
 - `@ApiKey()` - пометка эндпоинта как требующего API ключ
 - `@Serialize(DtoClass)` - указание DTO для сериализации ответа
+- `@User()` - получение `req.user` в хендлере (поддерживает generic: `@User<MyUserType>()`)
+
+```typescript
+@UseGuards(JwtAuthGuard)
+@Get("profile")
+getProfile(@User() user: UserFromContext) {
+    return user;
+}
+
+// С кастомным типом
+@UseGuards(JwtAuthGuard)
+@Get("me")
+getMe(@User<MyUser>() user: MyUser) {
+    return user;
+}
+```
 
 ### Утилиты
 

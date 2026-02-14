@@ -26,7 +26,10 @@ export default {
 	// Таймаут для тестов (5 секунд)
 	testTimeout: 5000,
 
-	// Принудительное завершение процессов после завершения тестов (решает проблему EPERM на Windows)
+	/**
+	 * Принудительное завершение процессов после завершения тестов
+	 * (решает проблему EPERM на Windows)
+	 */
 	forceExit: process.platform === "win32",
 
 	// Конфигурация для TypeScript packages с ts-jest preset
@@ -64,7 +67,5 @@ export default {
 		"^src/(.*)$": "<rootDir>/src/$1",
 	},
 	setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
-	transformIgnorePatterns: [
-		"node_modules/(?!.*@makebelieve21213-packages)",
-	],
+	transformIgnorePatterns: ["node_modules/(?!.*@makebelieve21213-packages)"],
 };
