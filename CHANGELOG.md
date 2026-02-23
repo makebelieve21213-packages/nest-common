@@ -5,6 +5,11 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.5] - 2026-02-23
+
+### Исправлено
+- Декоратор `@User()`: теперь получает `request` через `getArgByIndex(0)` вместо `switchToHttp().getRequest()`, чтобы корректно работать с Passport и цепочкой Guard → Interceptors → Pipes. В некоторых конфигурациях при использовании AuthGuard от Passport возвращался неверный `request.user`.
+
 ## [1.1.4] - 2026-02-14
 
 ### Добавлено

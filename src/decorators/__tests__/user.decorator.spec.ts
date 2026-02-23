@@ -1,5 +1,4 @@
 import User from "src/decorators/user.decorator";
-import * as contextUtils from "src/utils/context.utils";
 
 import type { ExecutionContext } from "@nestjs/common";
 
@@ -51,12 +50,11 @@ describe("User decorator", () => {
 		expect(TestController).toBeDefined();
 	});
 
-	it("should call getUserFromContext and return user when factory is invoked", () => {
+	it("should return user from request when factory is invoked", () => {
 		const mockUser = { id: "1", email: "test@test.com", roles: ["admin"] };
+		const mockRequest = { user: mockUser };
 		const mockContext: ExecutionContext = {
-			switchToHttp: () => ({
-				getRequest: () => ({ user: mockUser }),
-			}),
+			getArgByIndex: (index: number) => (index === 0 ? mockRequest : undefined),
 		} as unknown as ExecutionContext;
 
 		class TestController {
@@ -74,10 +72,9 @@ describe("User decorator", () => {
 	});
 
 	it("should return undefined when user is not in request", () => {
+		const mockRequest = {};
 		const mockContext: ExecutionContext = {
-			switchToHttp: () => ({
-				getRequest: () => ({}),
-			}),
+			getArgByIndex: (index: number) => (index === 0 ? mockRequest : undefined),
 		} as unknown as ExecutionContext;
 
 		class TestController {
@@ -90,29 +87,5 @@ describe("User decorator", () => {
 		const result = capturedFactory?.(undefined, mockContext);
 
 		expect(result).toBeUndefined();
-	});
-
-	it("should invoke getUserFromContext when factory runs", () => {
-		const getUserSpy = jest.spyOn(contextUtils, "getUserFromContext");
-		const mockUser = { id: "2", email: "user@example.com" };
-		const mockContext: ExecutionContext = {
-			switchToHttp: () => ({
-				getRequest: () => ({ user: mockUser }),
-			}),
-		} as unknown as ExecutionContext;
-
-		class TestController {
-			getUser(@User() _user: unknown) {
-				return _user;
-			}
-		}
-		expect(TestController).toBeDefined();
-
-		capturedFactory?.(undefined, mockContext);
-
-		expect(getUserSpy).toHaveBeenCalledWith(mockContext);
-		expect(getUserSpy).toHaveBeenCalledTimes(1);
-
-		getUserSpy.mockRestore();
 	});
 });
