@@ -5,6 +5,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
 и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.6] - 2026-02-24
+
+### Добавлено
+- Тесты для `stringifyForLog` (src/utils/stringify.ts) — покрытие всех веток
+- Тесты для `error-extract.utils.ts` (extractRpcCode, normalizeMessage, extractRpcMessage)
+- Расширенные тесты для HttpExceptionFilter (rpcCodeToHttpStatus, path fallback, stringifyForLog ветки)
+
+### Исправлено
+- Ошибки типизации в http-exception-handler.spec.ts (rpcCodeToHttpStatus, Error.message)
+
+### Удалено
+- Декоратор `@User()` — используйте `getUserFromContext(context)` для извлечения пользователя
+
 ## [1.1.5] - 2026-02-23
 
 ### Исправлено

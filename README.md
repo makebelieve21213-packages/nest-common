@@ -21,7 +21,7 @@
 - ✅ **Валидация** - готовые пайпы для валидации DTO, файлов, query параметров и заголовков
 - ✅ **Логирование** - автоматическое логирование всех HTTP, RPC и WebSocket запросов
 - ✅ **Guards** - готовые guards для аутентификации, авторизации и rate limiting
-- ✅ **Декораторы** - удобные декораторы для метаданных (@Public, @Roles, @Permissions, @ApiKey, @Serialize, @User)
+- ✅ **Декораторы** - удобные декораторы для метаданных (@Public, @Roles, @Permissions, @ApiKey, @Serialize)
 - ✅ **Утилиты** - функции для работы с контекстом, файлами, CORS, compression, versioning
 - ✅ **100% покрытие тестами** - надежность и качество кода
 - ✅ **TypeScript типизация** - полная типобезопасность
@@ -317,22 +317,6 @@ app.useGlobalInterceptors(new UnifiedInterceptor(logger));
 - `@Permissions(...)` - указание требуемых разрешений
 - `@ApiKey()` - пометка эндпоинта как требующего API ключ
 - `@Serialize(DtoClass)` - указание DTO для сериализации ответа
-- `@User()` - получение `req.user` в хендлере (поддерживает generic: `@User<MyUserType>()`)
-
-```typescript
-@UseGuards(JwtAuthGuard)
-@Get("profile")
-getProfile(@User() user: UserFromContext) {
-    return user;
-}
-
-// С кастомным типом
-@UseGuards(JwtAuthGuard)
-@Get("me")
-getMe(@User<MyUser>() user: MyUser) {
-    return user;
-}
-```
 
 ### Утилиты
 
@@ -508,7 +492,7 @@ npm run test:coverage
 
 **Покрытие тестами:**
 - Statements: 100%
-- Branches: 95.45%
+- Branches: 97%+
 - Functions: 100%
 - Lines: 100%
 

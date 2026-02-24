@@ -15,11 +15,13 @@ export default class UnifiedExceptionFilter implements ExceptionFilter {
 	constructor(
 		private readonly loggerService: LoggerService,
 		@Optional()
-		private readonly dlxExchange?: string
+		private readonly dlxExchange?: string,
+		@Optional()
+		private readonly rpcCodeToHttpStatus?: (code: string | undefined) => number | undefined
 	) {
 		this.loggerService.setContext(UnifiedExceptionFilter.name);
 
-		this.httpFilter = new HttpExceptionFilter(this.loggerService);
+		this.httpFilter = new HttpExceptionFilter(this.loggerService, this.rpcCodeToHttpStatus);
 		this.rpcFilter = new RpcExceptionFilter(this.loggerService, this.dlxExchange);
 		this.wsHandler = new WebSocketExceptionHandler(this.loggerService);
 	}

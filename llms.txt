@@ -180,7 +180,6 @@ app.useGlobalInterceptors(new UnifiedInterceptor(logger));
 - `@Permissions(...)` - указание требуемых разрешений
 - `@ApiKey()` - пометка эндпоинта как требующего API ключ
 - `@Serialize(DtoClass)` - указание DTO для сериализации ответа
-- `@User()` - получение req.user в хендлере (поддерживает generic: @User<MyUserType>())
 
 ### Утилиты
 

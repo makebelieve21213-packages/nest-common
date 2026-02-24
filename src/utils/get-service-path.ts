@@ -15,8 +15,10 @@ export default function getServicePath(options: GetServicePathOptions): string {
 	// Определяем, начинается ли relativePath с "src/"
 	const pathWithoutSrc = relativePath.startsWith("src/") ? relativePath.slice(4) : relativePath;
 
-	// Находим корень сервиса (где находится папка src)
-	// Идем вверх от dirname до тех пор, пока не найдем папку src
+	/**
+	 * Находим корень сервиса (где находится папка src)
+	 * Идем вверх от dirname до тех пор, пока не найдем папку src
+	 */
 	let currentPath = dirname;
 	let serviceRoot: string | null = null;
 	const maxDepth = 10; // Защита от бесконечного цикла

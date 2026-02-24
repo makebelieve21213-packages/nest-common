@@ -2,6 +2,7 @@ import { HttpStatus } from "@nestjs/common";
 import { throwError } from "rxjs";
 import { catchError, tap } from "rxjs/operators";
 import HttpError from "src/errors/http.error";
+import stringifyForLog from "src/utils/stringify";
 
 import type { LoggerService } from "@makebelieve21213-packages/logger";
 import type { CallHandler, ExecutionContext } from "@nestjs/common";
@@ -40,17 +41,15 @@ export default class HttpLoggingInterceptor {
 					`[HTTP] Request completed [${method} ${url}] ${statusCode} ${duration}ms`
 				);
 			}),
-			catchError((error: Error | unknown) => {
+			catchError((error: unknown) => {
 				const duration = Date.now() - startTime;
-				// Преобразуем ошибку в HttpError для извлечения статус кода и сообщения
 				const httpError = HttpError.fromUnknown(error);
 				const statusCode = httpError.getStatus();
-
+				const message =
+					typeof httpError.message === "string" ? httpError.message : stringifyForLog(httpError.message);
 				this.loggerService.error(
-					`[HTTP] Request failed [${method} ${url}] ${statusCode} ${duration}ms - ${httpError.message}`
+					`[HTTP] Request failed [${method} ${url}] ${statusCode} ${duration}ms - ${message}`
 				);
-
-				// Пробрасываем ошибку дальше для обработки фильтром
 				return throwError(() => error);
 			})
 		);

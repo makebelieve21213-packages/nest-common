@@ -47,7 +47,6 @@ export { Roles, ROLES_KEY } from "src/decorators/roles.decorator";
 export { Permissions, PERMISSIONS_KEY } from "src/decorators/permissions.decorator";
 export { ApiKey, API_KEY_KEY } from "src/decorators/api-key.decorator";
 export { Serialize, SERIALIZE_KEY } from "src/decorators/serialize.decorator";
-export { default as User } from "src/decorators/user.decorator";
 
 export {
 	getUserFromContext,
