@@ -8,7 +8,7 @@ describe("RolesGuard", () => {
 	let guard: RolesGuard;
 	let reflector: Reflector;
 	let mockExecutionContext: jest.Mocked<ExecutionContext>;
-	let mockRequest: { user?: { roles?: string[] } };
+	let mockRequest: { user?: { role?: string } };
 
 	beforeEach(() => {
 		reflector = new Reflector();
@@ -35,7 +35,7 @@ describe("RolesGuard", () => {
 
 	it("should allow access when user has required role", () => {
 		jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(["admin"]);
-		mockRequest.user = { roles: ["admin", "user"] };
+		mockRequest.user = { role: "admin" };
 
 		const result = guard.canActivate(mockExecutionContext);
 
@@ -44,7 +44,7 @@ describe("RolesGuard", () => {
 
 	it("should allow access when user has one of required roles", () => {
 		jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(["admin", "moderator"]);
-		mockRequest.user = { roles: ["moderator"] };
+		mockRequest.user = { role: "moderator" };
 
 		const result = guard.canActivate(mockExecutionContext);
 
@@ -53,7 +53,7 @@ describe("RolesGuard", () => {
 
 	it("should throw ForbiddenException when user does not have required role", () => {
 		jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(["admin"]);
-		mockRequest.user = { roles: ["user"] };
+		mockRequest.user = { role: "user" };
 
 		expect(() => guard.canActivate(mockExecutionContext)).toThrow(ForbiddenException);
 		expect(() => guard.canActivate(mockExecutionContext)).toThrow("Insufficient permissions");
@@ -75,9 +75,9 @@ describe("RolesGuard", () => {
 		expect(result).toBe(true);
 	});
 
-	it("should handle user with undefined roles", () => {
+	it("should handle user with undefined role", () => {
 		jest.spyOn(reflector, "getAllAndOverride").mockReturnValue(["admin"]);
-		mockRequest.user = { roles: undefined };
+		mockRequest.user = { role: undefined };
 
 		expect(() => guard.canActivate(mockExecutionContext)).toThrow(ForbiddenException);
 	});
@@ -102,7 +102,7 @@ describe("RolesGuard", () => {
 		expect(result1).toBe(true);
 
 		jest.spyOn(testReflector, "getAllAndOverride").mockReturnValue(["admin"]);
-		mockRequest.user = { roles: ["admin"] };
+		mockRequest.user = { role: "admin" };
 		const result2 = testGuard.canActivate(mockExecutionContext);
 		expect(result2).toBe(true);
 	});
